@@ -41,4 +41,38 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Create an admin user
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
+            'is_verified' => true,
+        ]);
+    }
+
+    /**
+     * Create a cook user
+     */
+    public function cook(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'cook',
+            'is_verified' => true,
+            'phone' => fake()->phoneNumber(),
+        ]);
+    }
+
+    /**
+     * Create a client user
+     */
+    public function client(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'client',
+            'is_verified' => true,
+        ]);
+    }
 }

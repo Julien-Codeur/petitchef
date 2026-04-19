@@ -19,14 +19,14 @@ class DishController extends Controller
         $user = auth()->user();
 
         if ($user->isClient()) {
-            // Clients see only today's active dishes
-            $dishes = Dish::today()->active()->get();
+            // Clients see only today's active dishes with eager loaded cook
+            $dishes = Dish::with('cook')->today()->active()->get();
         } elseif ($user->isCook()) {
             // Cooks see their own dishes
             $dishes = $user->dishes()->orderBy('served_date', 'asc')->get();
         } else {
-            // Admin sees all dishes
-            $dishes = Dish::all();
+            // Admin sees all dishes with cook relation
+            $dishes = Dish::with('cook')->all();
         }
 
         return view('dishes.index', compact('dishes'));
@@ -125,9 +125,12 @@ class DishController extends Controller
     /**
      * Close service for today - deactivate all dishes for this cook on today
      */
-    public function closeService()
+    public function closeService(Request $request)
     {
-        $this->authorize('closeService', auth()->user());
+        // Only cooks can close service
+        if (!auth()->user()->isCook()) {
+            abort(403, 'Unauthorized');
+        }
 
         $count = auth()->user()->dishes()
             ->whereDate('served_date', today())

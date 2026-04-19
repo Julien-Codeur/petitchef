@@ -72,10 +72,16 @@ L'application sera disponible à `http://localhost:8000`
 - Changer le statut: reçue → en préparation → prête → livrée
 - Clôturer le service du jour (désactiver tous les plats)
 
-**Admin**
+**Admin** 🔐
 - Accès total à toutes les données
-- Valider les profils de cuisiniers
+- **Valider les profils de cuisiniers** (workflow complet)
 - Voir les statistiques
+- Gérer les commandes
+- Gérer les plats
+- Gérer les utilisateurs
+
+👉 **[Voir le guide complet de l'interface Admin](ADMIN_INTERFACE.md)**  
+👉 **[Guide d'utilisation pas à pas](ADMIN_USAGE_GUIDE.md)**
 
 ### Structure de la base de données
 

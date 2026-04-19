@@ -1,136 +1,134 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Plats') }}
-            </h2>
-            @auth
-                @if(auth()->user()->isCook())
-                    <a href="{{ route('dishes.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Ajouter un plat
-                    </a>
-                @endif
-            @endauth
+<x-sidebar-layout>
+<div style="padding: 0;">
+    <!-- Entête -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="font-size: 28px; font-weight: 700; color: #333; font-family: 'Plus Jakarta Sans', sans-serif;">Mes Plats 🍽️</h1>
+        @if(auth()->user()->isCook())
+            <div style="display: flex; gap: 12px;">
+                <a href="{{ route('dishes.create') }}" style="background-color: #ff6b35; color: white; padding: 12px 24px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
+                    ➕ Ajouter un plat
+                </a>
+                <form action="{{ route('dishes.close-service') }}" method="POST">
+                    @csrf
+                    <button type="submit" style="background-color: #705a49; color: white; padding: 12px 24px; border-radius: 20px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;" onmouseover="this.style.backgroundColor='#5a4738'" onmouseout="this.style.backgroundColor='#705a49'" onclick="return confirm('Êtes-vous sûr? Cela désactivera tous vos plats du jour.')">
+                        🔒 Clôturer le service
+                    </button>
+                </form>
+            </div>
+        @endif
+    </div>
+
+    <!-- Messages -->
+    @if ($message = Session::get('success'))
+        <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #2e7d32;">
+            <p style="margin: 0;">✓ {{ $message }}</p>
         </div>
-    </x-slot>
+    @endif
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            {{-- Messages --}}
-            @if ($message = Session::get('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
-                    {{ $message }}
-                </div>
-            @endif
+    @if ($message = Session::get('error'))
+        <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #d32f2f;">
+            <p style="margin: 0;">✗ {{ $message }}</p>
+        </div>
+    @endif
 
-            @if ($message = Session::get('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                    {{ $message }}
-                </div>
-            @endif
-
-            {{-- Dishes Grid --}}
-            @if($dishes->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($dishes as $dish)
-                        <div class="bg-white overflow-hidden shadow rounded-lg">
-                            @if($dish->photo_path)
-                                <img src="{{ asset('storage/' . $dish->photo_path) }}" alt="{{ $dish->name }}" class="w-full h-48 object-cover">
-                            @else
-                                <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-                                    <span class="text-gray-400">Pas de photo</span>
-                                </div>
-                            @endif
-                            
-                            <div class="px-6 py-4">
-                                <h3 class="text-lg font-semibold text-gray-900">{{ $dish->name }}</h3>
-                                <p class="text-gray-600 text-sm mt-2">{{ $dish->description }}</p>
-                                
-                                <div class="mt-4 flex justify-between items-center">
-                                    <span class="text-2xl font-bold text-blue-600">{{ number_format($dish->price, 2) }}€</span>
-                                    <span class="text-sm text-gray-500">
-                                        @if($dish->available_qty > 0)
-                                            {{ $dish->available_qty }} disponible
-                                        @else
-                                            <span class="text-red-500">Rupture</span>
-                                        @endif
-                                    </span>
-                                </div>
-
-                                <div class="mt-4 text-xs text-gray-500">
-                                    Par: <strong>{{ $dish->cook->name }}</strong>
-                                </div>
-
-                                <div class="mt-4 flex gap-2">
-                                    @if(auth()->user()?->isCook() && auth()->user()->id === $dish->cook_id)
-                                        <a href="{{ route('dishes.edit', $dish) }}" class="flex-1 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded text-center">
-                                            Modifier
-                                        </a>
-                                        <form action="{{ route('dishes.destroy', $dish) }}" method="POST" class="flex-1">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('Êtes-vous sûr?')">
-                                                Supprimer
-                                            </button>
-                                        </form>
-                                    @elseif(auth()->user()?->isClient() && $dish->available_qty > 0)
-                                        <button onclick="openAddToCartModal({{ $dish->id }}, '{{ $dish->name }}', {{ $dish->price }}, {{ $dish->available_qty }})" class="flex-1 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                            Ajouter au panier
-                                        </button>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="bg-white overflow-hidden shadow rounded-lg p-6 text-center">
-                    <p class="text-gray-600">Aucun plat disponible pour le moment.</p>
-                </div>
-            @endif
+    <!-- Filtres & Stats -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 30px;">
+        <div style="background-color: #fff3e0; border-radius: 8px; padding: 16px; text-align: center;">
+            <p style="margin: 0; font-size: 12px; color: #666;">Total plats</p>
+            <p style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #ff6b35;">{{ $dishes->count() }}</p>
+        </div>
+        <div style="background-color: #e8f5e9; border-radius: 8px; padding: 16px; text-align: center;">
+            <p style="margin: 0; font-size: 12px; color: #666;">Actifs aujourd'hui</p>
+            <p style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #4caf50;">{{ $dishes->where('is_active', true)->where('served_date', '>=', today())->count() }}</p>
+        </div>
+        <div style="background-color: #e3f2fd; border-radius: 8px; padding: 16px; text-align: center;">
+            <p style="margin: 0; font-size: 12px; color: #666;">Stock total</p>
+            <p style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #00677e;">{{ $dishes->sum('available_qty') }}</p>
+        </div>
+        <div style="background-color: #f3e5f5; border-radius: 8px; padding: 16px; text-align: center;">
+            <p style="margin: 0; font-size: 12px; color: #666;">Chiffre potentiel</p>
+            <p style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #705a49;">{{ number_format($dishes->sum(function($dish) { return $dish->price * $dish->available_qty; }), 2) }}€</p>
         </div>
     </div>
 
-    {{-- Modal Ajouter au panier --}}
-    @auth
-        @if(auth()->user()->isClient())
-            <div id="addToCartModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-                <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-                    <h3 class="text-lg font-semibold text-gray-900">Ajouter au panier</h3>
-                    <p class="text-gray-600 mt-2"><strong id="dishName"></strong> - <span id="dishPrice"></span>€</p>
+    <!-- Grille des plats -->
+    @if($dishes->count() > 0)
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+            @foreach($dishes as $dish)
+                <div style="background-color: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                     
-                    <form id="addToCartForm" method="POST">
-                        @csrf
-                        <div class="mt-4">
-                            <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantité:</label>
-                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="1" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
+                    <!-- Photo -->
+                    @if($dish->photo_path)
+                        <img src="{{ asset('storage/' . $dish->photo_path) }}" alt="{{ $dish->name }}" style="width: 100%; height: 180px; object-fit: cover;">
+                    @else
+                        <div style="width: 100%; height: 180px; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #999;">
+                            📷 Pas de photo
                         </div>
-                        
-                        <div class="mt-4 flex gap-2">
-                            <button type="submit" class="flex-1 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                Ajouter
-                            </button>
-                            <button type="button" onclick="closeAddToCartModal()" class="flex-1 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                Annuler
-                            </button>
+                    @endif
+
+                    <!-- Contenu -->
+                    <div style="padding: 16px;">
+                        <!-- Titre & Badges -->
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #333; flex: 1;">{{ $dish->name }}</h3>
+                            <div style="display: flex; gap: 6px;">
+                                @if($dish->is_active && $dish->served_date >= today())
+                                    <span style="background-color: #e8f5e9; color: #2e7d32; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">✓ Actif</span>
+                                @else
+                                    <span style="background-color: #ffebee; color: #d32f2f; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">✗ Inactif</span>
+                                @endif
+                            </div>
                         </div>
-                    </form>
+
+                        <!-- Description -->
+                        <p style="margin: 0 0 12px 0; font-size: 13px; color: #666; line-height: 1.5;">{{ Str::limit($dish->description, 80) }}</p>
+
+                        <!-- Prix & Stock -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e0e0e0;">
+                            <div>
+                                <p style="margin: 0; font-size: 11px; color: #999;">Prix</p>
+                                <p style="margin: 4px 0 0 0; font-size: 18px; font-weight: 700; color: #ff6b35;">{{ number_format($dish->price, 2) }}€</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <p style="margin: 0; font-size: 11px; color: #999;">Stock</p>
+                                <p style="margin: 4px 0 0 0; font-size: 18px; font-weight: 700; color: {{ $dish->available_qty > 5 ? '#4caf50' : ($dish->available_qty > 0 ? '#ff9800' : '#d32f2f') }};">{{ $dish->available_qty }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Date & Cuisinier -->
+                        <div style="font-size: 12px; color: #999; margin-bottom: 12px;">
+                            📅 {{ $dish->served_date->format('d/m/Y') }}<br>
+                            👨‍🍳 {{ $dish->cook->name }}
+                        </div>
+
+                        <!-- Actions -->
+                        <div style="display: flex; gap: 8px;">
+                            <a href="{{ route('dishes.edit', $dish) }}" style="flex: 1; background-color: #705a49; color: white; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; text-align: center; cursor: pointer;" onmouseover="this.style.backgroundColor='#5a4738'" onmouseout="this.style.backgroundColor='#705a49'">
+                                ✏️ Modifier
+                            </a>
+                            <form action="{{ route('dishes.destroy', $dish) }}" method="POST" style="flex: 1;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" style="width: 100%; background-color: #d32f2f; color: white; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer;" onmouseover="this.style.backgroundColor='#b71c1c'" onmouseout="this.style.backgroundColor='#d32f2f'" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce plat?')">
+                                    🗑️ Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <script>
-                function openAddToCartModal(dishId, dishName, dishPrice, maxQty) {
-                    document.getElementById('dishName').textContent = dishName;
-                    document.getElementById('dishPrice').textContent = dishPrice.toFixed(2);
-                    document.getElementById('quantity').max = maxQty;
-                    document.getElementById('quantity').value = 1;
-                    document.getElementById('addToCartForm').action = `/cart/${dishId}`;
-                    document.getElementById('addToCartModal').classList.remove('hidden');
-                }
-
-                function closeAddToCartModal() {
-                    document.getElementById('addToCartModal').classList.add('hidden');
-                }
-            </script>
-        @endif
-    @endauth
-</x-app-layout>
+            @endforeach
+        </div>
+    @else
+        <div style="background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 40px; text-align: center;">
+            <p style="font-size: 32px; margin: 0 0 16px 0;">🍽️</p>
+            <p style="font-size: 16px; color: #666; margin: 0;">Aucun plat pour le moment</p>
+            <p style="font-size: 13px; color: #999; margin: 8px 0 0 0;">Commencez à ajouter vos spécialités !</p>
+            @if(auth()->user()->isCook())
+                <a href="{{ route('dishes.create') }}" style="display: inline-block; margin-top: 16px; background-color: #ff6b35; color: white; padding: 12px 24px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
+                    ➕ Créer votre premier plat
+                </a>
+            @endif
+        </div>
+    @endif
+</div>
+</x-sidebar-layout>

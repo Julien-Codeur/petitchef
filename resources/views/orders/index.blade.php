@@ -1,131 +1,177 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Mes commandes') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if ($message = Session::get('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
-                    {{ $message }}
-                </div>
+<x-sidebar-layout>
+<div style="padding: 0;">
+    <!-- Entête -->
+    <div style="margin-bottom: 30px;">
+        <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">
+            @if(auth()->user()->isClient())
+                Mes Commandes 📋
+            @elseif(auth()->user()->isCook())
+                Commandes Reçues 👨‍🍳
+            @else
+                Toutes les Commandes 📊
             @endif
+        </h1>
+        <p style="color: #999; margin: 0;">Historique complet de vos transactions</p>
+    </div>
 
-            @if ($message = Session::get('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                    {{ $message }}
-                </div>
-            @endif
+    <!-- Messages -->
+    @if ($message = Session::get('success'))
+        <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #4caf50;">
+            <p style="margin: 0;">✓ {{ $message }}</p>
+        </div>
+    @endif
 
-            @if($orders->count() > 0)
-                <div class="space-y-4">
-                    @foreach($orders as $order)
-                        <div class="bg-white overflow-hidden shadow rounded-lg p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                <div>
-                                    <p class="text-gray-600 text-sm">Commande #{{ $order->id }}</p>
-                                    <p class="text-lg font-semibold">{{ $order->created_at->format('d/m/Y H:i') }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600 text-sm">Statut</p>
-                                    <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold 
-                                        @switch($order->status)
-                                            @case('received')
-                                                bg-blue-100 text-blue-800
-                                                @break
-                                            @case('preparing')
-                                                bg-yellow-100 text-yellow-800
-                                                @break
-                                            @case('ready')
-                                                bg-green-100 text-green-800
-                                                @break
-                                            @case('delivered')
-                                                bg-purple-100 text-purple-800
-                                                @break
-                                            @case('cancelled')
-                                                bg-red-100 text-red-800
-                                                @break
-                                        @endswitch">
-                                        {{ $order->getStatusLabel() }}
-                                    </span>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600 text-sm">Heure de retrait</p>
-                                    <p class="text-lg font-semibold">{{ $order->pickup_time->format('H:i') }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600 text-sm">Total</p>
-                                    <p class="text-2xl font-bold text-blue-600">{{ number_format($order->total_price, 2) }}€</p>
-                                </div>
+    @if ($message = Session::get('error'))
+        <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #d32f2f;">
+            <p style="margin: 0;">✗ {{ $message }}</p>
+        </div>
+    @endif
+
+    <!-- Barre d'action -->
+    <div style="background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px;">
+        @if(auth()->user()->isClient())
+            <a href="{{ route('dishes.menu-du-jour') }}" style="background-color: #ff6b35; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
+                🍽️ Continuer mes courses
+            </a>
+        @endif
+    </div>
+
+    @if($orders->count() > 0)
+        <!-- Liste des commandes -->
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            @foreach($orders as $order)
+                <div style="background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; overflow: hidden;">
+                    <!-- En-tête de commande -->
+                    <div style="background-color: #f9f9f9; border-bottom: 1px solid #e0e0e0; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #333; font-family: 'Plus Jakarta Sans', sans-serif;">Commande #{{ $order->id }}</h3>
+                            <p style="margin: 0; font-size: 12px; color: #999;">
+                                Créée le {{ $order->created_at->format('d/m/Y à H:i') }}
+                            </p>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; color: white;
+                                @switch($order->status)
+                                    @case('received')
+                                        background-color: #2196f3;
+                                        @break
+                                    @case('preparing')
+                                        background-color: #ff9800;
+                                        @break
+                                    @case('ready')
+                                        background-color: #4caf50;
+                                        @break
+                                    @case('delivered')
+                                        background-color: #9c27b0;
+                                        @break
+                                    @case('cancelled')
+                                        background-color: #d32f2f;
+                                        @break
+                                @endswitch">
+                                {{ $order->getStatusLabel() }}
+                            </span>
+                            <p style="margin: 8px 0 0 0; font-size: 16px; font-weight: 700; color: #ff6b35;">{{ number_format($order->total_price, 2) }}€</p>
+                        </div>
+                    </div>
+
+                    <!-- Contenu commande -->
+                    <div style="padding: 16px;">
+                        <!-- Chef & Pickup Time -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #e0e0e0;">
+                            <div>
+                                <p style="margin: 0 0 4px 0; font-size: 12px; color: #999; font-weight: 600; text-transform: uppercase;">Cuisinier</p>
+                                <p style="margin: 0; font-weight: 700; color: #333;">{{ $order->cook->name }}</p>
                             </div>
-
-                            <div class="border-t pt-4">
-                                <p class="text-gray-600 text-sm mb-2">{{ $orders->count() > 1 ? 'Cuisinier' : 'Client' }}: <strong>{{ auth()->user()->isCook() ? $order->client->name : $order->cook->name }}</strong></p>
-                                @if($order->note_client)
-                                    <p class="text-gray-600 text-sm">Note: <strong>{{ $order->note_client }}</strong></p>
-                                @endif
-                            </div>
-
-                            <div class="mt-4 flex gap-2">
-                                <a href="{{ route('orders.show', $order) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Détails
-                                </a>
-
-                                @if(auth()->user()->isClient() && $order->status === 'received')
-                                    <a href="{{ route('orders.edit', $order) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-                                        Modifier note
-                                    </a>
-                                    <form action="{{ route('orders.destroy', $order) }}" method="POST" class="inline">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('Annuler cette commande?')">
-                                            Annuler
-                                        </button>
-                                    </form>
-                                @elseif(auth()->user()->isCook())
-                                    @if($order->canTransition('preparing') && $order->status === 'received')
-                                        <form action="{{ route('orders.update-status', $order) }}" method="POST" class="inline">
-                                            @csrf @method('PATCH')
-                                            <input type="hidden" name="status" value="preparing">
-                                            <button type="submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-                                                Commencer préparation
-                                            </button>
-                                        </form>
-                                    @endif
-                                    @if($order->canTransition('ready') && $order->status === 'preparing')
-                                        <form action="{{ route('orders.update-status', $order) }}" method="POST" class="inline">
-                                            @csrf @method('PATCH')
-                                            <input type="hidden" name="status" value="ready">
-                                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                                Prête pour retrait
-                                            </button>
-                                        </form>
-                                    @endif
-                                    @if($order->canTransition('delivered') && $order->status === 'ready')
-                                        <form action="{{ route('orders.update-status', $order) }}" method="POST" class="inline">
-                                            @csrf @method('PATCH')
-                                            <input type="hidden" name="status" value="delivered">
-                                            <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-                                                Livrée
-                                            </button>
-                                        </form>
-                                    @endif
-                                @endif
+                            <div>
+                                <p style="margin: 0 0 4px 0; font-size: 12px; color: #999; font-weight: 600; text-transform: uppercase;">Heure de Retrait</p>
+                                <p style="margin: 0; font-weight: 700; color: #333;">{{ $order->pickup_time }}</p>
                             </div>
                         </div>
-                    @endforeach
+
+                        <!-- Articles -->
+                        <div style="margin-bottom: 16px;">
+                            <p style="margin: 0 0 12px 0; font-size: 12px; color: #999; font-weight: 600; text-transform: uppercase;">Articles ({{ $order->items->count() }})</p>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                @foreach($order->items as $item)
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background-color: #f9f9f9; border-radius: 6px;">
+                                        <div>
+                                            <p style="margin: 0; font-weight: 600; color: #333;">{{ $item->dish->name }}</p>
+                                            <p style="margin: 2px 0 0 0; font-size: 12px; color: #999;">{{ $item->quantity }}x {{ number_format($item->unit_price, 2) }}€</p>
+                                        </div>
+                                        <p style="margin: 0; font-weight: 700; color: #ff6b35;">{{ number_format($item->quantity * $item->unit_price, 2) }}€</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Note client si présente -->
+                        @if($order->note_client)
+                            <div style="padding: 12px; background-color: #fff3e0; border-radius: 6px; margin-bottom: 16px; border-left: 4px solid #ff6b35;">
+                                <p style="margin: 0; font-size: 12px; color: #e65100; font-weight: 600; margin-bottom: 4px;">📝 Note spéciale:</p>
+                                <p style="margin: 0; font-size: 13px; color: #333;">{{ $order->note_client }}</p>
+                            </div>
+                        @endif
+
+                        <!-- Actions -->
+                        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                            <a href="{{ route('orders.show', $order) }}" style="background-color: #f5f5f5; color: #333; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid #e0e0e0;">
+                                Détails →
+                            </a>
+
+                            @if(auth()->user()->isClient() && $order->status === 'received')
+                                <form action="{{ route('orders.destroy', $order) }}" method="POST" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette commande?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" style="background-color: #ffebee; color: #d32f2f; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid #e0e0e0; cursor: pointer;">
+                                        ✕ Annuler
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if(auth()->user()->isCook() && in_array($order->status, ['received', 'preparing', 'ready']))
+                                <a href="{{ route('orders.show', $order) }}" style="background-color: #ff6b35; color: white; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid #ff6b35;">
+                                    ⚙️ Gérer →
+                                </a>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-            @else
-                <div class="bg-white overflow-hidden shadow rounded-lg p-6 text-center">
-                    <p class="text-gray-600 mb-4">Aucune commande.</p>
-                    @if(auth()->user()->isClient())
-                        <a href="{{ route('dishes.index') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Voir les plats
-                        </a>
-                    @endif
-                </div>
+            @endforeach
+        </div>
+    @else
+        <!-- État vide -->
+        <div style="background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 60px; text-align: center;">
+            <p style="font-size: 48px; margin: 0 0 16px 0;">
+                @if(auth()->user()->isClient())
+                    📭
+                @elseif(auth()->user()->isCook())
+                    🍳
+                @else
+                    📊
+                @endif
+            </p>
+            <p style="font-size: 18px; color: #333; margin: 0 0 8px 0; font-weight: 700;">
+                @if(auth()->user()->isClient())
+                    Aucune commande pour le moment
+                @elseif(auth()->user()->isCook())
+                    Aucune commande reçue
+                @else
+                    Aucune commande
+                @endif
+            </p>
+            <p style="font-size: 14px; color: #999; margin: 0 0 24px 0;">
+                @if(auth()->user()->isClient())
+                    Commencez à explorer le menu du jour pour passer votre première commande !
+                @else
+                    Vous recevrez les commandes des clients ici
+                @endif
+            </p>
+            @if(auth()->user()->isClient())
+                <a href="{{ route('dishes.menu-du-jour') }}" style="background-color: #ff6b35; color: white; padding: 12px 32px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; display: inline-block; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
+                    🍽️ Voir le menu du jour
+                </a>
             @endif
         </div>
-    </div>
-</x-app-layout>
+    @endif
+</div>
+</x-sidebar-layout>

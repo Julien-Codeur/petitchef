@@ -82,4 +82,28 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    /**
+     * Get all reports filed by this user
+     */
+    public function reportsFiled(): HasMany
+    {
+        return $this->hasMany(Report::class, 'reporter_id');
+    }
+
+    /**
+     * Get all reports against this user
+     */
+    public function reportsAgainst(): HasMany
+    {
+        return $this->hasMany(Report::class, 'reported_user_id');
+    }
+
+    /**
+     * Get all reports resolved by this admin
+     */
+    public function reportsResolved(): HasMany
+    {
+        return $this->hasMany(Report::class, 'resolved_by');
+    }
 }

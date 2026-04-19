@@ -30,5 +30,6 @@ class AppServiceProvider extends ServiceProvider
     {
         \Gate::policy(\App\Models\Dish::class, \App\Policies\DishPolicy::class);
         \Gate::policy(\App\Models\Order::class, \App\Policies\OrderPolicy::class);
+        \Gate::policy(\App\Models\Report::class, \App\Policies\ReportPolicy::class);
     }
 }

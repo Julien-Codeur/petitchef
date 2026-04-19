@@ -93,4 +93,31 @@ class Dish extends Model
     {
         return $query->where('cook_id', $cookId);
     }
+
+    /**
+     * Scope to get today's active dishes
+     */
+    public function scopeTodayActive($query)
+    {
+        return $query->whereDate('served_date', today())
+                     ->where('is_active', true);
+    }
+
+    /**
+     * Scope to get available dishes (active, today, and in stock)
+     */
+    public function scopeAvailable($query)
+    {
+        return $query->whereDate('served_date', '>=', today())
+                     ->where('is_active', true)
+                     ->where('available_qty', '>', 0);
+    }
+
+    /**
+     * Get all reports about this dish
+     */
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class, 'reported_dish_id');
+    }
 }

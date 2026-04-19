@@ -114,4 +114,12 @@ class Order extends Model
     {
         return $query->where('client_id', $clientId);
     }
+
+    /**
+     * Get all reports about this order
+     */
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class, 'reported_order_id');
+    }
 }

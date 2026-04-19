@@ -21,14 +21,22 @@ class OrderController extends Controller
         $user = auth()->user();
 
         if ($user->isClient()) {
-            // Clients see their own orders
-            $orders = $user->ordersAsClient()->orderBy('created_at', 'desc')->get();
+            // Clients see their own orders with eager loading
+            $orders = $user->ordersAsClient()
+                ->with(['cook', 'items.dish'])
+                ->orderBy('created_at', 'desc')
+                ->get();
         } elseif ($user->isCook()) {
-            // Cooks see orders received
-            $orders = $user->ordersAsCook()->orderBy('created_at', 'desc')->get();
+            // Cooks see orders received with eager loading
+            $orders = $user->ordersAsCook()
+                ->with(['client', 'items.dish'])
+                ->orderBy('created_at', 'desc')
+                ->get();
         } else {
-            // Admin sees all orders
-            $orders = Order::orderBy('created_at', 'desc')->get();
+            // Admin sees all orders with eager loading
+            $orders = Order::with(['client', 'cook', 'items.dish'])
+                ->orderBy('created_at', 'desc')
+                ->get();
         }
 
         return view('orders.index', compact('orders'));
@@ -61,10 +69,12 @@ class OrderController extends Controller
                 $items = $data['items'];
                 $totalPrice = 0;
                 $cookId = null;
+                $dishesToUpdate = [];
 
-                // Validate stock and calculate total
+                // Validate stock and calculate total (using pessimistic locking)
                 foreach ($items as $item) {
-                    $dish = Dish::findOrFail($item['dish_id']);
+                    // Lock the row for this transaction
+                    $dish = Dish::lockForUpdate()->findOrFail($item['dish_id']);
                     
                     // Check if dish is from same cook
                     if ($cookId === null) {
@@ -73,12 +83,26 @@ class OrderController extends Controller
                         throw new \Exception('Vous ne pouvez commander que chez un seul cuisinier à la fois.');
                     }
 
-                    // Check stock
+                    // Check stock with lock held
                     if ($dish->available_qty < $item['quantity']) {
                         throw new \Exception("Stock insuffisant pour {$dish->name}");
                     }
 
                     $totalPrice += $dish->price * $item['quantity'];
+                    $dishesToUpdate[] = [
+                        'dish' => $dish,
+                        'quantity' => $item['quantity'],
+                        'price' => $dish->price,
+                    ];
+                }
+
+                // Check if cook has reached 15 orders today limit
+                $todayOrdersCount = Order::where('cook_id', $cookId)
+                    ->whereDate('created_at', today())
+                    ->count();
+
+                if ($todayOrdersCount >= 15) {
+                    throw new \Exception('Le cuisinier a atteint le maximum de 15 commandes pour aujourd\'hui. Veuillez réessayer demain.');
                 }
 
                 // Create order
@@ -91,19 +115,19 @@ class OrderController extends Controller
                     'note_client' => $data['note_client'] ?? null,
                 ]);
 
-                // Create order items and decrease stock
-                foreach ($items as $item) {
-                    $dish = Dish::findOrFail($item['dish_id']);
+                // Create order items and decrease stock (dishes already locked)
+                foreach ($dishesToUpdate as $update) {
+                    $dish = $update['dish'];
 
                     OrderDish::create([
                         'order_id' => $order->id,
                         'dish_id' => $dish->id,
-                        'quantity' => $item['quantity'],
-                        'unit_price' => $dish->price,
+                        'quantity' => $update['quantity'],
+                        'unit_price' => $update['price'],
                     ]);
 
                     // Decrease stock
-                    $dish->decreaseStock($item['quantity']);
+                    $dish->decreaseStock($update['quantity']);
                 }
 
                 // Clear cart
@@ -218,5 +242,92 @@ class OrderController extends Controller
         
         return redirect()->route('orders.show', $order)
             ->with('success', 'Statut de la commande mis à jour.');
+    }
+
+    /**
+     * API: Get chef's orders for polling/real-time updates
+     */
+    public function apiChefOrders()
+    {
+        $cook = auth()->user();
+        
+        if (!$cook->isCook()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $orders = $cook->ordersAsCook()
+            ->with(['client', 'items.dish'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'id' => $order->id,
+                    'status' => $order->status,
+                    'client_name' => $order->client->name,
+                    'total_price' => $order->total_price,
+                    'created_at' => $order->created_at->diffForHumans(),
+                    'items' => $order->items->map(function ($item) {
+                        return [
+                            'dish_name' => $item->dish->name,
+                            'quantity' => $item->quantity,
+                            'unit_price' => $item->unit_price,
+                        ];
+                    })->toArray(),
+                ];
+            });
+
+        return response()->json([
+            'orders' => $orders,
+            'total' => $orders->count(),
+            'by_status' => [
+                'received' => $cook->ordersAsCook()->where('status', 'received')->count(),
+                'preparing' => $cook->ordersAsCook()->where('status', 'preparing')->count(),
+                'ready' => $cook->ordersAsCook()->where('status', 'ready')->count(),
+            ]
+        ]);
+    }
+
+    /**
+     * API: Get client's orders for polling/real-time updates
+     */
+    public function apiClientOrders()
+    {
+        $client = auth()->user();
+        
+        if (!$client->isClient()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $orders = $client->ordersAsClient()
+            ->with(['cook', 'items.dish'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'id' => $order->id,
+                    'status' => $order->status,
+                    'cook_name' => $order->cook->name,
+                    'total_price' => $order->total_price,
+                    'created_at' => $order->created_at->diffForHumans(),
+                    'items' => $order->items->map(function ($item) {
+                        return [
+                            'dish_name' => $item->dish->name,
+                            'quantity' => $item->quantity,
+                            'unit_price' => $item->unit_price,
+                        ];
+                    })->toArray(),
+                ];
+            });
+
+        return response()->json([
+            'orders' => $orders,
+            'total' => $orders->count(),
+            'by_status' => [
+                'received' => $client->ordersAsClient()->where('status', 'received')->count(),
+                'in_preparation' => $client->ordersAsClient()->where('status', 'preparing')->count(),
+                'ready' => $client->ordersAsClient()->where('status', 'ready')->count(),
+                'delivered' => $client->ordersAsClient()->where('status', 'delivered')->count(),
+            ]
+        ]);
     }
 }

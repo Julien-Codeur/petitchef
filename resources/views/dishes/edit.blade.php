@@ -1,82 +1,104 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Modifier: ' . $dish->name) }}
-        </h2>
-    </x-slot>
+<x-sidebar-layout>
+<div style="padding: 0;">
+    <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 20px; font-family: 'Plus Jakarta Sans', sans-serif;">Modifier le Plat: {{ $dish->name }}</h1>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow rounded-lg p-6">
-                @if ($errors->any())
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+    <form method="POST" action="{{ route('dishes.update', $dish) }}" enctype="multipart/form-data" style="background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 30px; max-width: 700px;">
+        @csrf
+        @method('PATCH')
 
-                <form action="{{ route('dishes.update', $dish) }}" method="POST" enctype="multipart/form-data">
-                    @csrf @method('PATCH')
+        @if ($errors->any())
+            <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px;">
+                <p style="color: #d32f2f; font-weight: 600; margin-bottom: 8px;">Erreurs dans le formulaire :</p>
+                <ul style="margin: 0; padding-left: 20px;">
+                    @foreach ($errors->all() as $error)
+                        <li style="color: #d32f2f; font-size: 13px;">{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-                    <div class="mb-4">
-                        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nom du plat:</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $dish->name) }}" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline">
-                    </div>
+        <!-- Nom -->
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">Nom du plat *</label>
+            <input type="text" name="name" value="{{ old('name', $dish->name) }}" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        </div>
 
-                    <div class="mb-4">
-                        <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-                        <textarea name="description" id="description" rows="4" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline">{{ old('description', $dish->description) }}</textarea>
-                    </div>
+        <!-- Description -->
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">Description *</label>
+            <textarea name="description" rows="4" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; box-sizing: border-box; font-family: 'Inter', sans-serif;">{{ old('description', $dish->description) }}</textarea>
+        </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="price" class="block text-gray-700 text-sm font-bold mb-2">Prix (€):</label>
-                            <input type="number" name="price" id="price" value="{{ old('price', $dish->price) }}" step="0.01" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline">
-                        </div>
-
-                        <div>
-                            <label for="available_qty" class="block text-gray-700 text-sm font-bold mb-2">Quantité disponible:</label>
-                            <input type="number" name="available_qty" id="available_qty" value="{{ old('available_qty', $dish->available_qty) }}" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <div>
-                            <label for="served_date" class="block text-gray-700 text-sm font-bold mb-2">Date de service:</label>
-                            <input type="date" name="served_date" id="served_date" value="{{ old('served_date', $dish->served_date->toDateString()) }}" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline">
-                        </div>
-
-                        <div>
-                            <label for="is_active" class="flex items-center text-gray-700 text-sm font-bold">
-                                <input type="checkbox" name="is_active" id="is_active" {{ old('is_active', $dish->is_active) ? 'checked' : '' }} class="mr-2">
-                                Actif
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="mt-4">
-                        <label for="photo" class="block text-gray-700 text-sm font-bold mb-2">Photo:</label>
-                        @if($dish->photo_path)
-                            <div class="mb-2">
-                                <img src="{{ asset('storage/' . $dish->photo_path) }}" alt="{{ $dish->name }}" class="w-32 h-32 object-cover rounded">
-                            </div>
-                        @endif
-                        <input type="file" name="photo" id="photo" accept="image/*" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline">
-                    </div>
-
-                    <div class="mt-6 flex gap-2">
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Mettre à jour
-                        </button>
-                        <a href="{{ route('dishes.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                            Annuler
-                        </a>
-                    </div>
-                </form>
+        <!-- Prix & Quantité -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div>
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">Prix (€) *</label>
+                <input type="number" name="price" value="{{ old('price', $dish->price) }}" step="0.01" min="0.01" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">Quantité disponible *</label>
+                <input type="number" name="available_qty" value="{{ old('available_qty', $dish->available_qty) }}" min="1" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
             </div>
         </div>
-    </div>
-</x-app-layout>
+
+        <!-- Date de service -->
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">Date de service *</label>
+            <input type="date" name="served_date" value="{{ old('served_date', $dish->served_date->toDateString()) }}" min="{{ today()->toDateString() }}" required style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        </div>
+
+        <!-- Actif/Inactif -->
+        <div style="margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #333; cursor: pointer;">
+                <input type="checkbox" name="is_active" {{ old('is_active', $dish->is_active) ? 'checked' : '' }} style="width: 20px; height: 20px; margin-right: 12px; cursor: pointer;">
+                Plat actif
+            </label>
+            <p style="font-size: 12px; color: #999; margin-top: 6px;">Décochez pour désactiver ce plat</p>
+        </div>
+
+        <!-- Photo -->
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 12px;">Photo du plat</label>
+            
+            @if($dish->photo_path)
+                <div style="margin-bottom: 16px; text-align: center;">
+                    <img src="{{ asset('storage/' . $dish->photo_path) }}" alt="{{ $dish->name }}" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #e0e0e0;">
+                </div>
+            @endif
+
+            <div style="border: 2px dashed #e0e0e0; border-radius: 8px; padding: 20px; text-align: center; background-color: #f9f9f9;">
+                <input type="file" name="photo" accept="image/*" id="photo-input" style="display: none;">
+                <label for="photo-input" style="cursor: pointer; display: block;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">📸</div>
+                    <p style="margin: 0; color: #333; font-weight: 600;">Cliquez ou déposez une image</p>
+                    <p style="margin: 4px 0 0 0; color: #999; font-size: 12px;">JPG, PNG, GIF - Max 5MB</p>
+                </label>
+                <div id="preview" style="margin-top: 12px;"></div>
+            </div>
+        </div>
+
+        <!-- Boutons -->
+        <div style="display: flex; gap: 12px;">
+            <button type="submit" style="flex: 1; background-color: #ff6b35; color: white; border: none; padding: 12px; border-radius: 20px; font-size: 15px; font-weight: 700; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
+                ✓ Mettre à jour
+            </button>
+            <a href="{{ route('dishes.index') }}" style="flex: 1; background-color: #f5f5f5; color: #333; border: 1px solid #e0e0e0; padding: 12px; border-radius: 20px; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
+                ✕ Annuler
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.getElementById('photo-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('preview').innerHTML = '<img src="' + event.target.result + '" style="max-width: 200px; border-radius: 8px;">';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+</x-sidebar-layout>
