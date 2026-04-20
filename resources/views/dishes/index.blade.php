@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-cook-sidebar-layout>
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
@@ -131,4 +131,32 @@
         </div>
     @endif
 </div>
-</x-sidebar-layout>
+
+<script>
+/**
+ * Real-time polling for chef's dishes
+ */
+(function() {
+    const pollingEndpoint = '{{ route("api.dishes.my-dishes") }}';
+    
+    function updateChefDishes(data) {
+        // Could update stats or highlight changes
+        console.log('Dishes updated:', data);
+    }
+    
+    // Start polling
+    if (window.OrderPoller && '{{ auth()->user()->isCook() ? 'true' : 'false' }}' === 'true') {
+        window.OrderPoller.pollInterval = 4000; // 4 seconds for dishes
+        window.OrderPoller.start(pollingEndpoint, updateChefDishes);
+    }
+    
+    // Stop polling when leaving page
+    window.addEventListener('beforeunload', () => {
+        if (window.OrderPoller) {
+            window.OrderPoller.stop();
+        }
+    });
+})();
+</script>
+
+</x-cook-sidebar-layout>

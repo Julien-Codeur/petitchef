@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-cook-sidebar-layout>
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 30px;">
@@ -234,4 +234,4 @@ document.getElementById('search-orders').addEventListener('keyup', function() {
     });
 });
 </script>
-</x-sidebar-layout>
+</x-cook-sidebar-layout>

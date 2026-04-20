@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-admin-sidebar-layout>
 <div style="padding: 0;">
     <!-- Header -->
     <div style="margin-bottom: 30px;">
@@ -157,4 +157,4 @@
         <a href="{{ route('admin.cooks.index') }}" style="display: inline-block; background-color: #e0e0e0; color: #333; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600;">← Retour à la liste</a>
     </div>
 </div>
-</x-sidebar-layout>
+</x-admin-sidebar-layout>

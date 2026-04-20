@@ -46,12 +46,11 @@
             <div class="sidebar-logo-text">🍽️ PETIT CHEF</div>
         </div>
         <nav class="sidebar-nav">
-            <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">📊 Tableau de bord</a>
-            <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">📋 Commandes</a>
-            <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">👥 Clients</a>
-            <a href="{{ route('admin.cooks.index') }}" class="{{ request()->routeIs('admin.cooks.*') ? 'active' : '' }}">👨‍🍳 Cuisiniers</a>
-            <a href="{{ route('admin.dishes.index') }}" class="{{ request()->routeIs('admin.dishes.*') ? 'active' : '' }}">🍲 Plats</a>
-            <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">📋 Rapports</a>
+            <!-- Client-specific menu items -->
+            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">📊 Tableau de bord</a>
+            <a href="{{ route('dishes.menu-du-jour') }}" class="{{ request()->routeIs('dishes.menu-du-jour') ? 'active' : '' }}">🍽️ Menu du jour</a>
+            <a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'active' : '' }}">🛒 Panier</a>
+            <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') && !request()->routeIs('orders.chef') ? 'active' : '' }}">📦 Mes commandes</a>
         </nav>
         <div class="sidebar-bottom">
             <p>MON COMPTE</p>
@@ -75,15 +74,7 @@
                 <div class="user-info">
                     <div>
                         <div class="user-name">{{ auth()->user()->name }}</div>
-                        <div class="user-role">
-                            @if(auth()->user()->isAdmin())
-                                Administrateur
-                            @elseif(auth()->user()->isCook())
-                                Cuisinier
-                            @else
-                                Client
-                            @endif
-                        </div>
+                        <div class="user-role">👤 Client</div>
                     </div>
                 </div>
             </div>
@@ -100,14 +91,12 @@
     // Update date and time
     function updateDateTime() {
         const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const dateStr = now.toLocaleDateString('fr-FR', options);
-        const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        
-        document.getElementById('current-date').textContent = dateStr;
-        document.getElementById('current-time').textContent = timeStr;
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        const dateString = now.toLocaleDateString('fr-FR', options);
+        const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('current-date').textContent = dateString;
+        document.getElementById('current-time').textContent = timeString;
     }
-    
     updateDateTime();
     setInterval(updateDateTime, 1000);
 </script>

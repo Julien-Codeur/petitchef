@@ -1,8 +1,8 @@
 <x-guest-layout>
 <div style="display: flex; height: 100vh; font-family: 'Inter', sans-serif;">
     <!-- Left Side - Image -->
-    <div style="flex: 1; background: linear-gradient(135deg, #fff3ed 0%, #ffe8d6 100%); display: flex; align-items: center; justify-content: center; padding: 40px;">
-        <img src="https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=600&h=800&fit=crop" alt="Cuisine" style="border-radius: 12px; object-fit: cover; height: 100%; max-height: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+    <div style="flex: 1; background: linear-gradient(135deg, #fff3ed 0%, #ffe8d6 100%); display: flex; align-items: center; justify-content: center; padding: 0; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=600&h=800&fit=crop" alt="Cuisine" style="border-radius: 0; object-fit: cover; height: 100%; width: 100%;">
     </div>
 
     <!-- Right Side - Login Form -->

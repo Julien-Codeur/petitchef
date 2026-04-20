@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-admin-sidebar-layout>
 <div style="padding: 0;">
     <!-- Header -->
     <div style="margin-bottom: 30px;">
@@ -297,4 +297,4 @@
     // Load charts when page is ready
     document.addEventListener('DOMContentLoaded', loadAdminCharts);
 </script>
-</x-sidebar-layout>
+</x-admin-sidebar-layout>

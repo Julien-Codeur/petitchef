@@ -1,4 +1,3 @@
-<x-sidebar-layout>
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 20px;">
@@ -146,4 +145,3 @@
         @endif
     </div>
 </div>
-</x-sidebar-layout>

@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-client-sidebar-layout>
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 30px;">
@@ -252,5 +252,35 @@
         document.getElementById('priceFilter').addEventListener('change', filterDishes);
         document.getElementById('priceFilter').addEventListener('input', filterDishes);
     </script>
+
+    <!-- Polling for real-time updates -->
+    <script>
+    /**
+     * Real-time polling for menu updates
+     */
+    (function() {
+        const pollingEndpoint = '{{ route("api.dishes.today") }}';
+        
+        function updateMenuStats(data) {
+            // Update stats
+            document.getElementById('statCooks').textContent = data.total_cooks || 0;
+            document.getElementById('statDishes').textContent = data.total_dishes || 0;
+            document.getElementById('statStock').textContent = data.total_stock || 0;
+        }
+        
+        // Start polling
+        if (window.OrderPoller) {
+            window.OrderPoller.pollInterval = 5000; // 5 seconds for menu
+            window.OrderPoller.start(pollingEndpoint, updateMenuStats);
+        }
+        
+        // Stop polling when leaving page
+        window.addEventListener('beforeunload', () => {
+            if (window.OrderPoller) {
+                window.OrderPoller.stop();
+            }
+        });
+    })();
+    </script>
 </div>
-</x-sidebar-layout>
+</x-client-sidebar-layout>

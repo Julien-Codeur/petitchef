@@ -330,4 +330,39 @@ class OrderController extends Controller
             ]
         ]);
     }
+
+    /**
+     * API: Get all orders for admin dashboard polling/real-time updates
+     */
+    public function apiAdminOrders()
+    {
+        if (!auth()->user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $orders = Order::with(['client', 'cook', 'items.dish'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'id' => $order->id,
+                    'status' => $order->status,
+                    'client_name' => $order->client->name,
+                    'cook_name' => $order->cook->name,
+                    'total_price' => $order->total_price,
+                    'created_at' => $order->created_at->diffForHumans(),
+                ];
+            });
+
+        return response()->json([
+            'orders' => $orders,
+            'total' => $orders->count(),
+            'by_status' => [
+                'received' => Order::where('status', 'received')->count(),
+                'preparing' => Order::where('status', 'preparing')->count(),
+                'ready' => Order::where('status', 'ready')->count(),
+                'delivered' => Order::where('status', 'delivered')->count(),
+            ]
+        ]);
+    }
 }

@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-cook-sidebar-layout>
 <div style="padding: 0;">
     <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 20px; font-family: 'Plus Jakarta Sans', sans-serif;">Modifier le Plat: {{ $dish->name }}</h1>
 
@@ -101,4 +101,4 @@ document.getElementById('photo-input').addEventListener('change', function(e) {
     }
 });
 </script>
-</x-sidebar-layout>
+</x-cook-sidebar-layout>

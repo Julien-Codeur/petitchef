@@ -1,7 +1,13 @@
 @if(auth()->user()->isAdmin())
-    @include('dashboard.admin-dashboard')
+    <x-admin-sidebar-layout>
+        @include('dashboard.admin-dashboard')
+    </x-admin-sidebar-layout>
 @elseif(auth()->user()->isCook())
-    @include('dashboard.chef-dashboard')
+    <x-cook-sidebar-layout>
+        @include('dashboard.chef-dashboard')
+    </x-cook-sidebar-layout>
 @else
-    @include('dashboard.client-dashboard')
+    <x-client-sidebar-layout>
+        @include('dashboard.client-dashboard')
+    </x-client-sidebar-layout>
 @endif

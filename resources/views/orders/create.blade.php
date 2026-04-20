@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-client-sidebar-layout>
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 30px;">
@@ -86,6 +86,14 @@
                 <form action="{{ route('orders.store') }}" method="POST" style="background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 16px; display: flex; flex-direction: column; gap: 16px;">
                     @csrf
 
+                    <!-- Items du panier (inputs cachés) -->
+                    @foreach($dishes as $dish)
+                        @if(isset($cart[$dish->id]))
+                            <input type="hidden" name="items[{{ $loop->index }}][dish_id]" value="{{ $dish->id }}">
+                            <input type="hidden" name="items[{{ $loop->index }}][quantity]" value="{{ $cart[$dish->id] }}">
+                        @endif
+                    @endforeach
+
                     <!-- Heure de retrait -->
                     <div>
                         <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">Heure de retrait *</label>
@@ -137,4 +145,4 @@
         </div>
     @endif
 </div>
-</x-sidebar-layout>
+</x-client-sidebar-layout>

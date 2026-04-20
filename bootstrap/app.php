@@ -14,9 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Add security headers middleware to all responses
         $middleware->use([\App\Http\Middleware\SecurityHeaders::class]);
         
-        // Add admin middleware alias
+        // Add role middleware aliases
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'cook' => \App\Http\Middleware\CookMiddleware::class,
+            'client' => \App\Http\Middleware\ClientMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

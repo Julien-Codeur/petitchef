@@ -1,4 +1,3 @@
-<x-sidebar-layout>
 <div style="padding: 0;">
     <div style="margin-bottom: 30px;">
         <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">Tableau de Bord Cuisinier 👨‍🍳</h1>
@@ -337,25 +336,3 @@
     // Load charts when page is ready
     document.addEventListener('DOMContentLoaded', loadChefCharts);
 </script>
-</x-sidebar-layout>
-                    <h4 style="font-weight: 700; color: #ff6b35; margin-bottom: 4px; font-family: 'Plus Jakarta Sans', sans-serif;">🆕 Commande #001251</h4>
-                    <p style="color: #999; font-size: 12px;">Commandée par: Luc Gautier</p>
-                </div>
-                <span style="background-color: #ff6b35; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">🆕 Nouvelle</span>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px; color: #666; margin-bottom: 12px;">
-                <div>
-                    <strong>Items:</strong> Bouillabaisse, Pain, Rouille
-                </div>
-                <div>
-                    <strong>Montant:</strong> <span style="color: #ff6b35; font-weight: 600;">64€</span>
-                </div>
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <button style="flex: 1; padding: 8px 12px; background-color: #ff6b35; color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">✓ Accepter & Commencer</button>
-                <button style="flex: 1; padding: 8px 12px; background-color: #f5f5f5; color: #333; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">❌ Refuser</button>
-            </div>
-        </div>
-    </div>
-</div>
-</x-sidebar-layout>

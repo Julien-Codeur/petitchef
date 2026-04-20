@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-client-sidebar-layout>
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 30px;">
@@ -188,4 +188,4 @@
         </div>
     @endif
 </div>
-</x-sidebar-layout>
+</x-client-sidebar-layout>

@@ -1,4 +1,3 @@
-<x-sidebar-layout>
 <div style="padding: 0;">
     <div style="margin-bottom: 30px;">
         <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">Bienvenue, {{ auth()->user()->name }}! 👋</h1>
@@ -336,4 +335,3 @@
     // Load charts when page is ready
     document.addEventListener('DOMContentLoaded', loadAdminCharts);
 </script>
-</x-sidebar-layout>

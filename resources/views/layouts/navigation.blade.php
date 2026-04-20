@@ -10,11 +10,62 @@
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
+                <!-- Navigation Links by Role -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    @auth
+                        @if(auth()->user()->role === 'admin')
+                            <!-- Admin Menu -->
+                            <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                                {{ __('Dashboard') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.cooks.index')" :active="request()->routeIs('admin.cooks.*')">
+                                {{ __('Cuisiniers') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
+                                {{ __('Commandes') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.dishes.index')" :active="request()->routeIs('admin.dishes.*')">
+                                {{ __('Plats') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                                {{ __('Utilisateurs') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.reports.index')" :active="request()->routeIs('admin.reports.*')">
+                                {{ __('Rapports') }}
+                            </x-nav-link>
+                        @elseif(auth()->user()->role === 'cook')
+                            <!-- Cook Menu -->
+                            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                                {{ __('Dashboard') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('orders.chef')" :active="request()->routeIs('orders.chef')">
+                                {{ __('Mes Commandes') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('dishes.index')" :active="request()->routeIs('dishes.*')">
+                                {{ __('Mes Plats') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                                {{ __('Mes Rapports') }}
+                            </x-nav-link>
+                        @else
+                            <!-- Client Menu -->
+                            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                                {{ __('Dashboard') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('dishes.menu-du-jour')" :active="request()->routeIs('dishes.menu-du-jour')">
+                                {{ __('Menu du Jour') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
+                                {{ __('Panier') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
+                                {{ __('Mes Commandes') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                                {{ __('Mes Rapports') }}
+                            </x-nav-link>
+                        @endif
+                    @endauth
                 </div>
             </div>
 
@@ -69,9 +120,60 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
+            @auth
+                @if(auth()->user()->role === 'admin')
+                    <!-- Admin Responsive Menu -->
+                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                        {{ __('Dashboard') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.cooks.index')" :active="request()->routeIs('admin.cooks.*')">
+                        {{ __('Cuisiniers') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
+                        {{ __('Commandes') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.dishes.index')" :active="request()->routeIs('admin.dishes.*')">
+                        {{ __('Plats') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                        {{ __('Utilisateurs') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.reports.index')" :active="request()->routeIs('admin.reports.*')">
+                        {{ __('Rapports') }}
+                    </x-responsive-nav-link>
+                @elseif(auth()->user()->role === 'cook')
+                    <!-- Cook Responsive Menu -->
+                    <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('Dashboard') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('orders.chef')" :active="request()->routeIs('orders.chef')">
+                        {{ __('Mes Commandes') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('dishes.index')" :active="request()->routeIs('dishes.*')">
+                        {{ __('Mes Plats') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                        {{ __('Mes Rapports') }}
+                    </x-responsive-nav-link>
+                @else
+                    <!-- Client Responsive Menu -->
+                    <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('Dashboard') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('dishes.menu-du-jour')" :active="request()->routeIs('dishes.menu-du-jour')">
+                        {{ __('Menu du Jour') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
+                        {{ __('Panier') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
+                        {{ __('Mes Commandes') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                        {{ __('Mes Rapports') }}
+                    </x-responsive-nav-link>
+                @endif
+            @endauth
         </div>
 
         <!-- Responsive Settings Options -->

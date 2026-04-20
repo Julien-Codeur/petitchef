@@ -17,13 +17,13 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    // Profile routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Profile routes - accessible to all authenticated users
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Admin routes
+    // ========== ADMIN ROUTES ==========
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         
@@ -51,58 +51,93 @@ Route::middleware('auth')->group(function () {
         Route::patch('/reports/{report}/priority', [ReportController::class, 'updatePriority'])->name('reports.priority');
     });
 
-    // Reports routes
+    // ========== COOK ROUTES ==========
+    Route::middleware('cook')->group(function () {
+        // Dish routes - only cooks can create/manage dishes
+        Route::resource('dishes', DishController::class);
+        Route::post('dishes/close-service', [DishController::class, 'closeService'])->name('dishes.close-service');
+        
+        // Chef orders view
+        Route::get('/chef/orders', function () {
+            // Eager load relations to avoid N+1 queries
+            $orders = auth()->user()->ordersAsCook()
+                ->with(['client', 'items.dish'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+            return view('orders.chef-orders', compact('orders'));
+        })->name('orders.chef');
+
+        // Chef stats API
+        Route::prefix('api/stats')->name('api.stats.')->group(function () {
+            Route::get('/chef', [StatsController::class, 'chefStats'])->name('chef');
+        });
+
+        // Chef polling API
+        Route::prefix('api/orders')->name('api.orders.')->group(function () {
+            Route::get('/chef/polling', [OrderController::class, 'apiChefOrders'])->name('chef.polling');
+            Route::get('/admin', [OrderController::class, 'apiAdminOrders'])->name('admin');
+        });
+
+        // Chef dishes API
+        Route::prefix('api/dishes')->name('api.dishes.')->group(function () {
+            Route::get('/my-dishes', [DishController::class, 'apiMyDishes'])->name('my-dishes');
+        });
+    });
+
+    // ========== CLIENT ROUTES ==========
+    Route::middleware('client')->group(function () {
+        // Menu du jour for clients
+        Route::get('/menu-du-jour', function () {
+            // Eager load cook relation to avoid N+1 queries
+            $dishes = \App\Models\Dish::with('cook')->today()->active()->get();
+            // Get cooks who have dishes today with their relations
+            $cooks = \App\Models\User::whereHas('dishes', function ($query) {
+                $query->today()->active();
+            })->with('dishes')->get();
+            return view('dishes.menu-du-jour', compact('dishes', 'cooks'));
+        })->name('dishes.menu-du-jour');
+
+        // Cart routes
+        Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+        Route::post('/cart/{dish}', [CartController::class, 'add'])->name('cart.add');
+        Route::delete('/cart/{dish}', [CartController::class, 'remove'])->name('cart.remove');
+        Route::patch('/cart/{dish}', [CartController::class, 'update'])->name('cart.update');
+        Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+
+        // Client orders
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+        Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+        Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+        Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+
+        // Client stats API
+        Route::prefix('api/stats')->name('api.stats.')->group(function () {
+            Route::get('/client', [StatsController::class, 'clientStats'])->name('client');
+        });
+
+        // Client polling API
+        Route::prefix('api/orders')->name('api.orders.')->group(function () {
+            Route::get('/client/polling', [OrderController::class, 'apiClientOrders'])->name('client.polling');
+        });
+
+        // Client dishes API
+        Route::prefix('api/dishes')->name('api.dishes.')->group(function () {
+            Route::get('/today', [DishController::class, 'apiTodayDishes'])->name('today');
+        });
+    });
+
+    // ========== SHARED ROUTES (for all authenticated users) ==========
+    // Reports routes - all users can file reports, but view is role-specific
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/create', [ReportController::class, 'create'])->name('reports.create');
     Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
     Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
     Route::delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
 
-    // Dish routes
-    Route::resource('dishes', DishController::class);
-    Route::post('dishes/close-service', [DishController::class, 'closeService'])->name('dishes.close-service');
-    
-    // Menu du jour for clients
-    Route::get('/menu-du-jour', function () {
-        // Eager load cook relation to avoid N+1 queries
-        $dishes = \App\Models\Dish::with('cook')->today()->active()->get();
-        // Get cooks who have dishes today with their relations
-        $cooks = \App\Models\User::whereHas('dishes', function ($query) {
-            $query->today()->active();
-        })->with('dishes')->get();
-        return view('dishes.menu-du-jour', compact('dishes', 'cooks'));
-    })->name('dishes.menu-du-jour');
-
-    // Order routes
-    Route::resource('orders', OrderController::class);
-    Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
-    Route::get('/chef/orders', function () {
-        // Eager load relations to avoid N+1 queries
-        $orders = auth()->user()->ordersAsCook()
-            ->with(['client', 'items.dish'])
-            ->orderBy('created_at', 'desc')
-            ->get();
-        return view('orders.chef-orders', compact('orders'));
-    })->name('orders.chef');
-
-    // Cart routes
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/{dish}', [CartController::class, 'add'])->name('cart.add');
-    Route::delete('/cart/{dish}', [CartController::class, 'remove'])->name('cart.remove');
-    Route::patch('/cart/{dish}', [CartController::class, 'update'])->name('cart.update');
-    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-
-    // API Stats endpoints (for charts/dashboards)
+    // Admin stats API
     Route::prefix('api/stats')->name('api.stats.')->group(function () {
-        Route::get('/admin', [StatsController::class, 'adminStats'])->name('admin');
-        Route::get('/chef', [StatsController::class, 'chefStats'])->name('chef');
-        Route::get('/client', [StatsController::class, 'clientStats'])->name('client');
-    });
-
-    // API Polling endpoints (for real-time updates)
-    Route::prefix('api/orders')->name('api.orders.')->group(function () {
-        Route::get('/chef/polling', [OrderController::class, 'apiChefOrders'])->name('chef.polling');
-        Route::get('/client/polling', [OrderController::class, 'apiClientOrders'])->name('client.polling');
+        Route::get('/admin', [StatsController::class, 'adminStats'])->middleware('admin')->name('admin');
     });
 });
 

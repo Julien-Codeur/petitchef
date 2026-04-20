@@ -139,4 +139,66 @@ class DishController extends Controller
         return redirect()->route('dishes.index')
             ->with('success', "Service clôturé. {$count} plat(s) désactivé(s).");
     }
+
+    /**
+     * API: Get chef's dishes for real-time updates
+     */
+    public function apiMyDishes()
+    {
+        $cook = auth()->user();
+        
+        if (!$cook->isCook()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $dishes = $cook->dishes()
+            ->today()
+            ->get()
+            ->map(function ($dish) {
+                return [
+                    'id' => $dish->id,
+                    'name' => $dish->name,
+                    'price' => $dish->price,
+                    'available_qty' => $dish->available_qty,
+                    'is_active' => $dish->is_active,
+                ];
+            });
+
+        return response()->json([
+            'dishes' => $dishes,
+            'total_active' => $cook->dishes()->today()->where('is_active', true)->count(),
+            'total_available' => $cook->dishes()->today()->sum('available_qty'),
+        ]);
+    }
+
+    /**
+     * API: Get today's available dishes for clients
+     */
+    public function apiTodayDishes()
+    {
+        $dishes = Dish::today()
+            ->active()
+            ->with('cook')
+            ->get()
+            ->map(function ($dish) {
+                return [
+                    'id' => $dish->id,
+                    'name' => $dish->name,
+                    'price' => $dish->price,
+                    'available_qty' => $dish->available_qty,
+                    'cook_name' => $dish->cook->name,
+                ];
+            });
+
+        $cooks = \App\Models\User::whereHas('dishes', function ($query) {
+            $query->today()->active();
+        })->count();
+
+        return response()->json([
+            'dishes' => $dishes,
+            'total_dishes' => $dishes->count(),
+            'total_cooks' => $cooks,
+            'total_stock' => Dish::today()->active()->sum('available_qty'),
+        ]);
+    }
 }

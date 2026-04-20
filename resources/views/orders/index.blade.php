@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-client-sidebar-layout>
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 30px;">
@@ -174,4 +174,44 @@
         </div>
     @endif
 </div>
-</x-sidebar-layout>
+
+@if(auth()->user()->isClient())
+<script>
+/**
+ * Real-time polling for client orders
+ */
+(function() {
+    const pollingEndpoint = '{{ route("api.orders.client.polling") }}';
+    
+    // Update orders list
+    function updateClientOrders(data) {
+        // Show notification if new order status changed
+        if (data.orders.length > 0) {
+            // Check for ready orders
+            const readyOrders = data.by_status.ready || 0;
+            if (readyOrders > 0 && document.body.dataset.hasReadyOrders !== 'true') {
+                document.body.dataset.hasReadyOrders = 'true';
+                if (window.Toaster) {
+                    window.Toaster.show('🎉 Votre commande est prête!', 'success');
+                }
+            }
+        }
+    }
+    
+    // Start polling for clients
+    if (window.OrderPoller) {
+        window.OrderPoller.pollInterval = 5000; // 5 seconds for clients
+        window.OrderPoller.start(pollingEndpoint, updateClientOrders);
+    }
+    
+    // Stop polling when leaving page
+    window.addEventListener('beforeunload', () => {
+        if (window.OrderPoller) {
+            window.OrderPoller.stop();
+        }
+    });
+})();
+</script>
+@endif
+
+</x-client-sidebar-layout>

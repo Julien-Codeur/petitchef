@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-cook-sidebar-layout>
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 30px;">
@@ -7,22 +7,22 @@
     </div>
 
     <!-- Filtres & Stats -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 30px;">
+    <div id="chef-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 30px;">
         <div style="background-color: #fff3e0; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="margin: 0; font-size: 12px; color: #666;">Reçues</p>
-            <p style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #ff6b35;">{{ $orders->where('status', 'received')->count() }}</p>
+            <p id="stat-received" style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #ff6b35;">{{ $orders->where('status', 'received')->count() }}</p>
         </div>
         <div style="background-color: #fff3e0; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="margin: 0; font-size: 12px; color: #666;">En préparation</p>
-            <p style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #ff9800;">{{ $orders->where('status', 'preparing')->count() }}</p>
+            <p id="stat-preparing" style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #ff9800;">{{ $orders->where('status', 'preparing')->count() }}</p>
         </div>
         <div style="background-color: #e8f5e9; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="margin: 0; font-size: 12px; color: #666;">Prêtes</p>
-            <p style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #4caf50;">{{ $orders->where('status', 'ready')->count() }}</p>
+            <p id="stat-ready" style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #4caf50;">{{ $orders->where('status', 'ready')->count() }}</p>
         </div>
         <div style="background-color: #e3f2fd; border-radius: 8px; padding: 16px; text-align: center;">
             <p style="margin: 0; font-size: 12px; color: #666;">Total montant</p>
-            <p style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #00677e;">{{ number_format($orders->where('status', '!=', 'cancelled')->sum('total_price'), 2) }}€</p>
+            <p id="stat-total" style="margin: 8px 0 0 0; font-size: 24px; font-weight: 700; color: #00677e;">0€</p>
         </div>
     </div>
 
@@ -42,8 +42,7 @@
     <!-- Commandes -->
     @if($orders->count() > 0)
         <div style="display: flex; flex-direction: column; gap: 16px;">
-            @foreach($orders->sortBy(function($order) { return ['received' => 0, 'preparing' => 1, 'ready' => 2, 'delivered' => 3, 'cancelled' => 4][$order->status]; }) as $order)
-                <div style="background-color: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            @foreach($orders->sortBy(function($order) { return ['received' => 0, 'preparing' => 1, 'ready' => 2, 'delivered' => 3, 'cancelled' => 4][$order->status]; }) as $order)>
                     <div style="display: flex; align-items: center; padding: 16px; gap: 12px; border-bottom: 1px solid #e0e0e0;">
                         <!-- Statut Badge -->
                         <div style="padding: 8px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; color: white;
@@ -157,4 +156,56 @@
         </div>
     @endif
 </div>
-</x-sidebar-layout>
+
+<script>
+/**
+ * Real-time polling for chef orders
+ */
+(function() {
+    const pollingEndpoint = '{{ route("api.orders.chef.polling") }}';
+    let lastOrderIds = new Set();
+    
+    // Initial load of order IDs
+    document.querySelectorAll('[data-order-id]').forEach(el => {
+        lastOrderIds.add(el.getAttribute('data-order-id'));
+    });
+    
+    // Update stats and list
+    function updateChefDashboard(data) {
+        // Update stats
+        document.getElementById('stat-received').textContent = data.by_status.received || 0;
+        document.getElementById('stat-preparing').textContent = data.by_status.preparing || 0;
+        document.getElementById('stat-ready').textContent = data.by_status.ready || 0;
+        
+        // Calculate total price
+        const totalPrice = data.orders.reduce((sum, order) => sum + parseFloat(order.total_price), 0);
+        document.getElementById('stat-total').textContent = totalPrice.toFixed(2) + '€';
+        
+        // Notify if new orders appear
+        const newOrderIds = new Set(data.orders.map(o => o.id.toString()));
+        newOrderIds.forEach(id => {
+            if (!lastOrderIds.has(id) && data.orders.length > 0) {
+                if (window.Toaster) {
+                    window.Toaster.show('✨ Nouvelle commande reçue!', 'success');
+                }
+            }
+        });
+        lastOrderIds = newOrderIds;
+    }
+    
+    // Start polling
+    if (window.OrderPoller) {
+        window.OrderPoller.pollInterval = 3000; // 3 seconds for chef
+        window.OrderPoller.start(pollingEndpoint, updateChefDashboard);
+    }
+    
+    // Stop polling when leaving page
+    window.addEventListener('beforeunload', () => {
+        if (window.OrderPoller) {
+            window.OrderPoller.stop();
+        }
+    });
+})();
+</script>
+
+</x-cook-sidebar-layout>

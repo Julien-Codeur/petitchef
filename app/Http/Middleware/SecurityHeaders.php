@@ -29,8 +29,8 @@ class SecurityHeaders
         }
         
         // Content Security Policy - allow Vite dev server and external resources
-        $viteHost = env('APP_ENV') === 'production' ? '' : "http://127.0.0.1:5173 http://localhost:5173 ws://127.0.0.1:5173 ws://localhost:5173 wss://127.0.0.1:5173 wss://localhost:5173";
-        $response->header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' {$viteHost} https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' {$viteHost} https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' {$viteHost}; media-src 'self' https:;");
+        $viteHosts = env('APP_ENV') === 'production' ? '' : "http://127.0.0.1:5173 http://localhost:5173 http://127.0.0.1:5174 http://localhost:5174 ws://127.0.0.1:5173 ws://localhost:5173 ws://127.0.0.1:5174 ws://localhost:5174 wss://127.0.0.1:5173 wss://localhost:5173 wss://127.0.0.1:5174 wss://localhost:5174";
+        $response->header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' {$viteHosts} https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' {$viteHosts} https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' {$viteHosts}; media-src 'self' https:;");
 
         return $response;
     }

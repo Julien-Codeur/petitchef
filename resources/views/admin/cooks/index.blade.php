@@ -1,4 +1,4 @@
-<x-sidebar-layout>
+<x-admin-sidebar-layout>
 <div style="padding: 0;">
     <!-- Header -->
     <div style="margin-bottom: 30px;">
@@ -74,4 +74,4 @@
         {{ $cooks->links() }}
     </div>
 </div>
-</x-sidebar-layout>
+</x-admin-sidebar-layout>
