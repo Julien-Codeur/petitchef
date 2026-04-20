@@ -43,21 +43,46 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-logo">
-            <div class="sidebar-logo-text">🍽️ PETIT CHEF</div>
+            <div class="sidebar-logo-text" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <x-icon icon="menu" size="20" color="#ff6b35" />
+                PETIT CHEF
+            </div>
         </div>
-        <nav class="sidebar-nav">
+        <nav class="sidebar-nav" style="display: flex; flex-direction: column; gap: 8px;">
             <!-- Client-specific menu items -->
-            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">📊 Tableau de bord</a>
-            <a href="{{ route('dishes.menu-du-jour') }}" class="{{ request()->routeIs('dishes.menu-du-jour') ? 'active' : '' }}">🍽️ Menu du jour</a>
-            <a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'active' : '' }}">🛒 Panier</a>
-            <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') && !request()->routeIs('orders.chef') ? 'active' : '' }}">📦 Mes commandes</a>
+            <a href="{{ route('dashboard') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <x-icon icon="home" size="18" color="#333" />
+                Tableau de bord
+            </a>
+            <a href="{{ route('dishes.menu-du-jour') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('dishes.menu-du-jour') ? 'active' : '' }}">
+                <x-icon icon="menu" size="18" color="#333" />
+                Menu du jour
+            </a>
+            <a href="{{ route('dishes.index') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('dishes.index') ? 'active' : '' }}">
+                <x-icon icon="menu" size="18" color="#333" />
+                Tous les plats
+            </a>
+            <a href="{{ route('cart.index') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('cart.*') ? 'active' : '' }}">
+                <x-icon icon="cart" size="18" color="#333" />
+                Panier
+            </a>
+            <a href="{{ route('orders.index') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('orders.*') && !request()->routeIs('orders.chef') ? 'active' : '' }}">
+                <x-icon icon="orders" size="18" color="#333" />
+                Mes commandes
+            </a>
         </nav>
         <div class="sidebar-bottom">
             <p>MON COMPTE</p>
-            <a href="{{ route('profile.edit') }}" style="display: block; padding: 8px 12px; color: #ff6b35; text-decoration: none; font-size: 13px; margin-bottom: 8px;">👤 Profil</a>
+            <a href="{{ route('profile.edit') }}" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; color: #ff6b35; text-decoration: none; font-size: 13px; margin-bottom: 8px;">
+                <x-icon icon="profile" size="18" color="#333" />
+                Profil
+            </a>
             <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                 @csrf
-                <button type="submit" class="logout-btn">🚪 DECONNEXION</button>
+                <button type="submit" class="logout-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <x-icon icon="logout" size="16" color="white" />
+                    DECONNEXION
+                </button>
             </form>
         </div>
     </div>
@@ -74,7 +99,10 @@
                 <div class="user-info">
                     <div>
                         <div class="user-name">{{ auth()->user()->name }}</div>
-                        <div class="user-role">👤 Client</div>
+                        <div class="user-role" style="display: flex; align-items: center; gap: 4px;">
+                            <x-icon icon="profile" size="14" color="#999" />
+                            Client
+                        </div>
                     </div>
                 </div>
             </div>

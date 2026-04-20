@@ -10,7 +10,9 @@
         <div style="width: 100%; max-width: 400px;">
             <!-- Logo -->
             <div style="text-align: center; margin-bottom: 40px;">
-                <div style="font-size: 48px; margin-bottom: 16px;">🍽️</div>
+                <div style="margin-bottom: 16px;">
+                    <x-icon icon="menu" size="48" color="#ff6b35" />
+                </div>
                 <h1 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700; color: #333; margin: 0;">PetitChef</h1>
                 <p style="color: #999; margin-top: 8px;">Commandez vos faits maisons en toute sécurité !</p>
             </div>
@@ -22,21 +24,27 @@
                     <label style="flex: 1; cursor: pointer;">
                         <input type="radio" name="role" value="client" checked style="display: none;">
                         <div class="role-btn" style="border: 2px solid #ff6b35; border-radius: 12px; padding: 12px; text-align: center; transition: all 0.3s;">
-                            <div style="font-size: 24px;">🛒</div>
+                            <div style="display: flex; justify-content: center;">
+                                <x-icon icon="cart" size="24" color="#ff6b35" />
+                            </div>
                             <div style="font-size: 13px; font-weight: 600; color: #ff6b35; margin-top: 8px;">CLIENT</div>
                         </div>
                     </label>
                     <label style="flex: 1; cursor: pointer;">
                         <input type="radio" name="role" value="chef" style="display: none;">
                         <div class="role-btn" style="border: 2px solid #e0e0e0; border-radius: 12px; padding: 12px; text-align: center; transition: all 0.3s;">
-                            <div style="font-size: 24px;">👨‍🍳</div>
+                            <div style="display: flex; justify-content: center;">
+                                <x-icon icon="profile" size="24" color="#666" />
+                            </div>
                             <div style="font-size: 13px; font-weight: 600; color: #666; margin-top: 8px;">CUISINIER</div>
                         </div>
                     </label>
                     <label style="flex: 1; cursor: pointer;">
                         <input type="radio" name="role" value="admin" style="display: none;">
                         <div class="role-btn" style="border: 2px solid #e0e0e0; border-radius: 12px; padding: 12px; text-align: center; transition: all 0.3s;">
-                            <div style="font-size: 24px;">🛡️</div>
+                            <div style="display: flex; justify-content: center;">
+                                <x-icon icon="settings" size="24" color="#666" />
+                            </div>
                             <div style="font-size: 13px; font-weight: 600; color: #666; margin-top: 8px;">ADMINISTRATEUR</div>
                         </div>
                     </label>

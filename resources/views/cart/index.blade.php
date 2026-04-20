@@ -2,20 +2,25 @@
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 30px;">
-        <h1 style="font-size: 28px; font-weight: 700; color: #333; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 8px;">Mon Panier 🛒</h1>
+        <h1 style="font-size: 28px; font-weight: 700; color: #333; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="cart" size="32" color="#333" />
+            Mon Panier
+        </h1>
         <p style="color: #666; margin: 0;">{{ count($cart) }} article(s) en attente</p>
     </div>
 
     <!-- Messages -->
     @if ($message = Session::get('success'))
-        <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #2e7d32;">
-            <p style="margin: 0;">✓ {{ $message }}</p>
+        <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #2e7d32; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="check" size="20" color="#4caf50" />
+            <p style="margin: 0;">{{ $message }}</p>
         </div>
     @endif
 
     @if ($message = Session::get('error'))
-        <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #d32f2f;">
-            <p style="margin: 0;">✗ {{ $message }}</p>
+        <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #d32f2f; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="alert" size="20" color="#d32f2f" />
+            <p style="margin: 0;">{{ $message }}</p>
         </div>
     @endif
 
@@ -32,7 +37,10 @@
 
         @if(count($stockIssues) > 0)
             <div style="background-color: #fff3cd; border-left: 4px solid #ff9800; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #f57c00;">
-                <p style="margin: 0 0 8px 0; font-weight: 700;">⚠️ Problèmes de stock détectés:</p>
+                <p style="margin: 0 0 8px 0; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                    <x-icon icon="alert" size="18" color="#ff9800" />
+                    Problèmes de stock détectés:
+                </p>
                 <ul style="margin: 0; padding-left: 20px;">
                     @foreach($stockIssues as $issue)
                         <li>
@@ -40,7 +48,10 @@
                         </li>
                     @endforeach
                 </ul>
-                <p style="margin: 8px 0 0 0; font-size: 12px;">💡 Veuillez ajuster les quantités avant de continuer.</p>
+                <p style="margin: 8px 0 0 0; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                    <x-icon icon="info" size="14" color="#f57c00" />
+                    Veuillez ajuster les quantités avant de continuer.
+                </p>
             </div>
         @endif
     @endif
@@ -69,7 +80,7 @@
                                     @if($dish->photo_path)
                                         <img src="{{ asset('storage/' . $dish->photo_path) }}" alt="{{ $dish->name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
                                     @else
-                                        <span style="font-size: 24px;">🍽️</span>
+                                        <x-icon icon="menu" size="24" color="#999" />
                                     @endif
                                 </div>
 
@@ -82,16 +93,19 @@
                                     <!-- Stock Status -->
                                     <div style="margin-top: 6px;">
                                         @if($dish->available_qty <= 3 && $dish->available_qty > 0)
-                                            <span style="display: inline-block; background-color: #fff3cd; color: #f57c00; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">
-                                                ⚠️ Derniers {{ $dish->available_qty }} disponibles
+                                            <span style="display: inline-block; background-color: #fff3cd; color: #f57c00; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                                                <x-icon icon="alert" size="10" color="#f57c00" />
+                                                Derniers {{ $dish->available_qty }} disponibles
                                             </span>
                                         @elseif($dish->available_qty <= 0)
-                                            <span style="display: inline-block; background-color: #ffebee; color: #d32f2f; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">
-                                                ❌ En rupture
+                                            <span style="display: inline-block; background-color: #ffebee; color: #d32f2f; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                                                <x-icon icon="alert" size="10" color="#d32f2f" />
+                                                En rupture
                                             </span>
                                         @else
-                                            <span style="display: inline-block; background-color: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">
-                                                ✓ {{ $dish->available_qty }} en stock
+                                            <span style="display: inline-block; background-color: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                                                <x-icon icon="check" size="10" color="#2e7d32" />
+                                                {{ $dish->available_qty }} en stock
                                             </span>
                                         @endif
                                     </div>
@@ -121,7 +135,10 @@
                                 <!-- Prix Total & Supprimer -->
                                 <div style="text-align: right;">
                                     <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 700; color: #ff6b35;">{{ number_format($itemTotal, 2) }}€</p>
-                                    <form action="{{ route('cart.remove', $dish) }}" method="POST">
+                                    <form action="{{ route('cart.remove', $dish) }}" method="POST"> display: flex; align-items: center; gap: 4px;">
+                                            <x-icon icon="trash" size="12" color="#d32f2f" />
+                                            Supprimer
+                                        
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" style="background-color: #ffebee; color: #d32f2f; border: none; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">🗑️ Supprimer</button>

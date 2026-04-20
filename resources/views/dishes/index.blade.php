@@ -2,16 +2,21 @@
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h1 style="font-size: 28px; font-weight: 700; color: #333; font-family: 'Plus Jakarta Sans', sans-serif;">Mes Plats 🍽️</h1>
+        <h1 style="font-size: 28px; font-weight: 700; color: #333; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="menu" size="32" color="#333" />
+            Mes Plats
+        </h1>
         @if(auth()->user()->isCook())
             <div style="display: flex; gap: 12px;">
                 <a href="{{ route('dishes.create') }}" style="background-color: #ff6b35; color: white; padding: 12px 24px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
-                    ➕ Ajouter un plat
+                    <x-icon icon="plus" size="16" color="white" />
+                    Ajouter un plat
                 </a>
                 <form action="{{ route('dishes.close-service') }}" method="POST">
                     @csrf
                     <button type="submit" style="background-color: #705a49; color: white; padding: 12px 24px; border-radius: 20px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;" onmouseover="this.style.backgroundColor='#5a4738'" onmouseout="this.style.backgroundColor='#705a49'" onclick="return confirm('Êtes-vous sûr? Cela désactivera tous vos plats du jour.')">
-                        🔒 Clôturer le service
+                        <x-icon icon="close" size="16" color="white" />
+                        Clôturer le service
                     </button>
                 </form>
             </div>
@@ -20,14 +25,16 @@
 
     <!-- Messages -->
     @if ($message = Session::get('success'))
-        <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #2e7d32;">
-            <p style="margin: 0;">✓ {{ $message }}</p>
+        <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #2e7d32; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="check" size="20" color="#4caf50" />
+            <p style="margin: 0;">{{ $message }}</p>
         </div>
     @endif
 
     @if ($message = Session::get('error'))
-        <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #d32f2f;">
-            <p style="margin: 0;">✗ {{ $message }}</p>
+        <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #d32f2f; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="alert" size="20" color="#d32f2f" />
+            <p style="margin: 0;">{{ $message }}</p>
         </div>
     @endif
 

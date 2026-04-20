@@ -4,9 +4,9 @@
     <div style="margin-bottom: 30px;">
         <h1 style="font-size: 28px; font-weight: 700; color: #333; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
             <x-icon icon="menu" size="32" color="#333" />
-            Menu du Jour
+            Tous les Plats
         </h1>
-        <p style="color: #666; margin: 0;">Découvrez les meilleures cuisines artisanales locales</p>
+        <p style="color: #666; margin: 0;">Découvrez l'ensemble de notre catalogue de plats artisanaux</p>
     </div>
 
     <!-- Filtres & Recherche -->
@@ -118,6 +118,11 @@
                                         </div>
                                     </div>
 
+                                    <!-- Date de service -->
+                                    <div style="font-size: 12px; color: #999; margin-bottom: 12px;">
+                                        Disponible le {{ $dish->served_date->format('d/m/Y') }}
+                                    </div>
+
                                     <!-- Bouton Ajouter -->
                                     @if($dish->available_qty > 0)
                                         <button type="button" onclick="openAddToCartModal({{ $dish->id }}, '{{ addslashes($dish->name) }}', {{ $dish->price }}, {{ $dish->available_qty }})" style="width: 100%; background-color: #ff6b35; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
@@ -137,11 +142,11 @@
                 </div>
             @endif
         @endforeach
-    @elsemargin: 0 0 16px 0;">
-                <x-icon icon="search" size="48" color="#ccc" />
-            
+    @else
         <div style="background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 60px; text-align: center;">
-            <p style="font-size: 48px; margin: 0 0 16px 0;">🔍</p>
+            <p style="margin: 0 0 16px 0;">
+                <x-icon icon="search" size="48" color="#ccc" />
+            </p>
             <p style="font-size: 18px; color: #333; margin: 0 0 8px 0; font-weight: 700;">Aucun plat disponible</p>
             <p style="font-size: 14px; color: #999; margin: 0;">Revenir plus tard pour découvrir les délices de nos cuisiniers !</p>
         </div>
@@ -163,15 +168,15 @@
                     <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">Quantité:</label>
                     <input type="number" name="quantity" id="quantity" value="1" min="1" max="1" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
                 </div>
- display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
+
+                <div style="display: flex; gap: 12px;">
+                    <button type="submit" style="flex: 1; background-color: #ff6b35; color: white; border: none; padding: 12px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
                         <x-icon icon="check" size="16" color="white" />
                         Ajouter
                     </button>
                     <button type="button" onclick="closeAddToCartModal()" style="flex: 1; background-color: #f5f5f5; color: #333; border: 1px solid #e0e0e0; padding: 12px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <x-icon icon="close" size="16" color="#333" />
-                       ton>
-                    <button type="button" onclick="closeAddToCartModal()" style="flex: 1; background-color: #f5f5f5; color: #333; border: 1px solid #e0e0e0; padding: 12px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">
-                        ✕ Annuler
+                        Annuler
                     </button>
                 </div>
             </form>
@@ -207,95 +212,33 @@
         // Fonction de filtrage
         function filterDishes() {
             const searchTerm = document.getElementById('search').value.toLowerCase();
-            const maxPrice = parseFloat(document.getElementById('priceFilter').value) || Infinity;
-            
-            let visibleDishes = 0;
-            let visibleCooks = new Set();
-            let totalStock = 0;
+            const priceLimit = parseFloat(document.getElementById('priceFilter').value) || Infinity;
 
-            // Filtrer tous les plats
-            document.querySelectorAll('[data-dish-id]').forEach(element => {
-                const dishId = parseInt(element.getAttribute('data-dish-id'));
+            document.querySelectorAll('[data-dish-id]').forEach(dishCard => {
+                const dishId = parseInt(dishCard.getAttribute('data-dish-id'));
                 const dish = dishes.find(d => d.id === dishId);
-                
-                const matchesSearch = 
-                    dish.name.toLowerCase().includes(searchTerm) ||
-                    dish.description.toLowerCase().includes(searchTerm) ||
-                    dish.cook_name.toLowerCase().includes(searchTerm);
-                
-                const matchesPrice = dish.price <= maxPrice;
-                const isVisible = matchesSearch && matchesPrice && dish.available_qty > 0;
-                
-                element.style.display = isVisible ? 'block' : 'none';
-                
-                if (isVisible) {
-                    visibleDishes++;
-                    visibleCooks.add(dish.cook_id);
-                    totalStock += dish.available_qty;
-                }
+
+                if (!dish) return;
+
+                const matchesSearch = dish.name.toLowerCase().includes(searchTerm) ||
+                                    dish.description.toLowerCase().includes(searchTerm) ||
+                                    dish.cook_name.toLowerCase().includes(searchTerm);
+                const matchesPrice = dish.price <= priceLimit;
+
+                dishCard.style.display = (matchesSearch && matchesPrice) ? 'block' : 'none';
             });
 
-            // Afficher/masquer les sections des cuisiniers
+            // Masquer les sections vides
             document.querySelectorAll('[data-cook-section]').forEach(section => {
-                const cookId = parseInt(section.getAttribute('data-cook-section'));
-                const hasVisibleDishes = section.querySelector('[data-dish-id]:not([style*="display: none"])');
-                section.style.display = hasVisibleDishes ? 'block' : 'none';
+                const visibleCards = Array.from(section.querySelectorAll('[data-dish-id]'))
+                    .filter(card => card.style.display !== 'none');
+                section.style.display = visibleCards.length > 0 ? 'block' : 'none';
             });
-
-            // Mettre à jour les stats
-            document.getElementById('statDishes').textContent = visibleDishes;
-            document.getElementById('statCooks').textContent = visibleCooks.size;
-            document.getElementById('statStock').textContent = totalStock;
-
-            // Afficher message si aucun résultat
-            const noResults = visibleDishes === 0;
-            const existingMessage = document.getElementById('noResultsMessage');
-            
-            if (noResults && !existingMessage) {
-                const message = document.createElement('div');
-                message.id = 'noResultsMessage';
-                message.style.cssText = 'background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 60px; text-align: center; margin-top: 20px;';
-                message.innerHTML = '<p style="font-size: 48px; margin: 0 0 16px 0;">🔍</p><p style="font-size: 18px; color: #333; margin: 0 0 8px 0; font-weight: 700;">Aucun plat ne correspond</p><p style="font-size: 14px; color: #999; margin: 0;">Essayez une autre recherche ou prix maximum</p>';
-                document.querySelector('[data-all-dishes-container]').appendChild(message);
-            } else if (!noResults && existingMessage) {
-                existingMessage.remove();
-            }
         }
 
-        // Event listeners pour recherche et filtre
-        document.getElementById('search').addEventListener('keyup', filterDishes);
-        document.getElementById('priceFilter').addEventListener('change', filterDishes);
+        document.getElementById('search').addEventListener('input', filterDishes);
         document.getElementById('priceFilter').addEventListener('input', filterDishes);
     </script>
-
-    <!-- Polling for real-time updates -->
-    <script>
-    /**
-     * Real-time polling for menu updates
-     */
-    (function() {
-        const pollingEndpoint = '{{ route("api.dishes.today") }}';
-        
-        function updateMenuStats(data) {
-            // Update stats
-            document.getElementById('statCooks').textContent = data.total_cooks || 0;
-            document.getElementById('statDishes').textContent = data.total_dishes || 0;
-            document.getElementById('statStock').textContent = data.total_stock || 0;
-        }
-        
-        // Start polling
-        if (window.OrderPoller) {
-            window.OrderPoller.pollInterval = 5000; // 5 seconds for menu
-            window.OrderPoller.start(pollingEndpoint, updateMenuStats);
-        }
-        
-        // Stop polling when leaving page
-        window.addEventListener('beforeunload', () => {
-            if (window.OrderPoller) {
-                window.OrderPoller.stop();
-            }
-        });
-    })();
-    </script>
 </div>
+
 </x-client-sidebar-layout>

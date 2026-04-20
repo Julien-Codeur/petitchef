@@ -1,6 +1,9 @@
 <div style="padding: 0;">
     <div style="margin-bottom: 30px;">
-        <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">Tableau de Bord Cuisinier 👨‍🍳</h1>
+        <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="profile" size="32" color="#333" />
+            Tableau de Bord Cuisinier
+        </h1>
         <p style="color: #999; font-size: 14px;">Gérez vos commandes et optimisez votre production.</p>
     </div>
 
@@ -54,14 +57,17 @@
 
     <!-- Actions rapides -->
     <div style="display: flex; gap: 12px; margin-bottom: 30px;">
-        <a href="{{ route('dishes.index') }}" style="flex: 1; background-color: #ff6b35; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
-            🍽️ Gérer mes plats
+        <a href="{{ route('dishes.index') }}" style="flex: 1; background-color: #ff6b35; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
+            <x-icon icon="menu" size="16" color="white" />
+            Gérer mes plats
         </a>
-        <a href="{{ route('dishes.create') }}" style="flex: 1; background-color: #00677e; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer;" onmouseover="this.style.backgroundColor='#004d63'" onmouseout="this.style.backgroundColor='#00677e'">
-            ➕ Ajouter un plat
+        <a href="{{ route('dishes.create') }}" style="flex: 1; background-color: #00677e; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.backgroundColor='#004d63'" onmouseout="this.style.backgroundColor='#00677e'">
+            <x-icon icon="plus" size="16" color="white" />
+            Ajouter un plat
         </a>
-        <a href="{{ route('orders.chef') }}" style="flex: 1; background-color: #705a49; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer;" onmouseover="this.style.backgroundColor='#5a4738'" onmouseout="this.style.backgroundColor='#705a49'">
-            📋 Voir mes commandes
+        <a href="{{ route('orders.chef') }}" style="flex: 1; background-color: #705a49; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.backgroundColor='#5a4738'" onmouseout="this.style.backgroundColor='#705a49'">
+            <x-icon icon="orders" size="16" color="white" />
+            Voir mes commandes
         </a>
     </div>
 

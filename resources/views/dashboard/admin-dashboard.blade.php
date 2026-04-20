@@ -1,6 +1,9 @@
 <div style="padding: 0;">
     <div style="margin-bottom: 30px;">
-        <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">Bienvenue, {{ auth()->user()->name }}! 👋</h1>
+        <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="home" size="32" color="#333" />
+            Bienvenue, {{ auth()->user()->name }}!
+        </h1>
         <p style="color: #999; font-size: 14px;">Retrouvez un aperçu de toutes les activités et données importantes.</p>
     </div>
 
@@ -37,11 +40,23 @@
 
     <!-- Alerts Section -->
     <div style="background-color: #fff3ed; border-left: 4px solid #ff6b35; border-radius: 8px; padding: 16px; margin-bottom: 30px;">
-        <h3 style="font-size: 15px; font-weight: 700; color: #ff6b35; margin-bottom: 10px; font-family: 'Plus Jakarta Sans', sans-serif;">⚠️ Alertes Importantes</h3>
+        <h3 style="font-size: 15px; font-weight: 700; color: #ff6b35; margin-bottom: 10px; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="alert" size="18" color="#ff6b35" />
+            Alertes Importantes
+        </h3>
         <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="padding: 8px 0; color: #333; font-size: 13px;">📌 3 commandes en retard à traiter</li>
-            <li style="padding: 8px 0; color: #333; font-size: 13px;">📌 1 cuisinier signalé comme indisponible</li>
-            <li style="padding: 8px 0; color: #333; font-size: 13px;">📌 Maintenance prévue dimanche 21h-23h</li>
+            <li style="padding: 8px 0; color: #333; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                <x-icon icon="alert" size="14" color="#ff6b35" />
+                3 commandes en retard à traiter
+            </li>
+            <li style="padding: 8px 0; color: #333; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                <x-icon icon="alert" size="14" color="#ff6b35" />
+                1 cuisinier signalé comme indisponible
+            </li>
+            <li style="padding: 8px 0; color: #333; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                <x-icon icon="alert" size="14" color="#ff6b35" />
+                Maintenance prévue dimanche 21h-23h
+            </li>
         </ul>
     </div>
 
@@ -52,7 +67,7 @@
             <thead>
                 <tr style="border-bottom: 2px solid #e0e0e0;">
                     <th style="text-align: left; padding: 12px; color: #666; font-weight: 600; font-size: 12px;">ID COMMANDE</th>
-                    <th style="text-align: left; padding: 12px; color: #666; font-weight: 600; font-size: 12px;">CLIENT</th>
+                    <th style="text-align: left; padding: 12px; color: #666; font-weight: 600; font-size: 12px;">CLIENT</th> display: flex; align-items: center; gap: 4px;"><x-icon icon="check" size="12" color="#2e7d32" />
                     <th style="text-align: left; padding: 12px; color: #666; font-weight: 600; font-size: 12px;">CUISINIER</th>
                     <th style="text-align: left; padding: 12px; color: #666; font-weight: 600; font-size: 12px;">MONTANT</th>
                     <th style="text-align: left; padding: 12px; color: #666; font-weight: 600; font-size: 12px;">STATUT</th>
@@ -71,7 +86,7 @@
                     <td style="padding: 12px; color: #333;">Pierre Martin</td>
                     <td style="padding: 12px; color: #333;">Sophie Bernard</td>
                     <td style="padding: 12px; color: #ff6b35; font-weight: 600;">56€</td>
-                    <td style="padding: 12px;"><span style="background-color: #fff3e0; color: #e65100; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">⏳ En préparation</span></td>
+                    <td style="padding: 12px;"><span style="background-color: #fff3e0; color: #e65100; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;"><x-icon icon="alert" size="12" color="#e65100" /> En préparation</span></td>
                 </tr>
                 <tr style="border-bottom: 1px solid #e0e0e0;">
                     <td style="padding: 12px; color: #333; font-weight: 600;">#001243</td>

@@ -62,7 +62,10 @@
             <!-- Note client -->
             @if($order->note_client)
                 <div style="background-color: #fff3e0; border-radius: 8px; padding: 16px; border-left: 4px solid #ff6b35; margin-bottom: 20px;">
-                    <p style="margin: 0 0 8px 0; font-size: 12px; color: #e65100; font-weight: 600; text-transform: uppercase;">📝 Note spéciale du client</p>
+                    <p style="margin: 0 0 8px 0; font-size: 12px; color: #e65100; font-weight: 600; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                        <x-icon icon="edit" size="14" color="#e65100" />
+                        Note spéciale du client
+                    </p>
                     <p style="margin: 0; font-size: 14px; color: #333;">{{ $order->note_client }}</p>
                 </div>
             @endif

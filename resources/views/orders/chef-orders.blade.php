@@ -2,7 +2,10 @@
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 30px;">
-        <h1 style="font-size: 28px; font-weight: 700; color: #333; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 8px;">Commandes en Attente 📋</h1>
+        <h1 style="font-size: 28px; font-weight: 700; color: #333; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="orders" size="32" color="#333" />
+            Commandes en Attente
+        </h1>
         <p style="color: #666; margin: 0;">Gérez les commandes de votre service aujourd'hui</p>
     </div>
 
@@ -28,14 +31,16 @@
 
     <!-- Messages -->
     @if ($message = Session::get('success'))
-        <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #2e7d32;">
-            <p style="margin: 0;">✓ {{ $message }}</p>
+        <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #2e7d32; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="check" size="20" color="#4caf50" />
+            <p style="margin: 0;">{{ $message }}</p>
         </div>
     @endif
 
     @if ($message = Session::get('error'))
-        <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #d32f2f;">
-            <p style="margin: 0;">✗ {{ $message }}</p>
+        <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #d32f2f; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="alert" size="20" color="#d32f2f" />
+            <p style="margin: 0;">{{ $message }}</p>
         </div>
     @endif
 

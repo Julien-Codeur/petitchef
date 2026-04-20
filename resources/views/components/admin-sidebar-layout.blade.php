@@ -43,22 +43,49 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-logo">
-            <div class="sidebar-logo-text">🍽️ PETIT CHEF</div>
+            <div class="sidebar-logo-text" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <x-icon icon="menu" size="20" color="#ff6b35" />
+                PETIT CHEF
+            </div>
         </div>
-        <nav class="sidebar-nav">
-            <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">📊 Tableau de bord</a>
-            <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">📋 Commandes</a>
-            <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">👥 Clients</a>
-            <a href="{{ route('admin.cooks.index') }}" class="{{ request()->routeIs('admin.cooks.*') ? 'active' : '' }}">👨‍🍳 Cuisiniers</a>
-            <a href="{{ route('admin.dishes.index') }}" class="{{ request()->routeIs('admin.dishes.*') ? 'active' : '' }}">🍲 Plats</a>
-            <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">📋 Rapports</a>
+        <nav class="sidebar-nav" style="display: flex; flex-direction: column; gap: 8px;">
+            <a href="{{ route('admin.dashboard') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <x-icon icon="home" size="18" color="#333" />
+                Tableau de bord
+            </a>
+            <a href="{{ route('admin.orders.index') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                <x-icon icon="orders" size="18" color="#333" />
+                Commandes
+            </a>
+            <a href="{{ route('admin.users.index') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                <x-icon icon="users" size="18" color="#333" />
+                Clients
+            </a>
+            <a href="{{ route('admin.cooks.index') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('admin.cooks.*') ? 'active' : '' }}">
+                <x-icon icon="profile" size="18" color="#333" />
+                Cuisiniers
+            </a>
+            <a href="{{ route('admin.dishes.index') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('admin.dishes.*') ? 'active' : '' }}">
+                <x-icon icon="menu" size="18" color="#333" />
+                Plats
+            </a>
+            <a href="{{ route('admin.reports.index') }}" style="display: flex; align-items: center; gap: 8px;" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
+                <x-icon icon="orders" size="18" color="#333" />
+                Rapports
+            </a>
         </nav>
         <div class="sidebar-bottom">
             <p>MON COMPTE</p>
-            <a href="{{ route('profile.edit') }}" style="display: block; padding: 8px 12px; color: #ff6b35; text-decoration: none; font-size: 13px; margin-bottom: 8px;">👤 Profil</a>
+            <a href="{{ route('profile.edit') }}" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; color: #ff6b35; text-decoration: none; font-size: 13px; margin-bottom: 8px;">
+                <x-icon icon="profile" size="18" color="#333" />
+                Profil
+            </a>
             <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                 @csrf
-                <button type="submit" class="logout-btn">🚪 DECONNEXION</button>
+                <button type="submit" class="logout-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <x-icon icon="logout" size="16" color="white" />
+                    DECONNEXION
+                </button>
             </form>
         </div>
     </div>

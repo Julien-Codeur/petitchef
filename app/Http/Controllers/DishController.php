@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreDishRequest;
 use App\Http\Requests\UpdateDishRequest;
 use App\Models\Dish;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
@@ -19,17 +20,35 @@ class DishController extends Controller
         $user = auth()->user();
 
         if ($user->isClient()) {
-            // Clients see only today's active dishes with eager loaded cook
-            $dishes = Dish::with('cook')->today()->active()->get();
+            // Clients see all available active dishes from verified (approved) cooks
+            $dishes = Dish::with('cook')
+                ->whereHas('cook', function ($query) {
+                    $query->where('is_verified', true);
+                })
+                ->where('is_active', true)
+                ->orderBy('served_date', 'desc')
+                ->get();
+            
+            // Get verified cooks who have active dishes
+            $cooks = User::where('is_verified', true)
+                ->whereHas('dishes', function ($query) {
+                    $query->where('is_active', true);
+                })
+                ->with(['dishes' => function ($query) {
+                    $query->where('is_active', true);
+                }])
+                ->get();
+            
+            return view('dishes.index-client', compact('dishes', 'cooks'));
         } elseif ($user->isCook()) {
             // Cooks see their own dishes
             $dishes = $user->dishes()->orderBy('served_date', 'asc')->get();
+            return view('dishes.index', compact('dishes'));
         } else {
             // Admin sees all dishes with cook relation
-            $dishes = Dish::with('cook')->all();
+            $dishes = Dish::with('cook')->get();
+            return view('dishes.index', compact('dishes'));
         }
-
-        return view('dishes.index', compact('dishes'));
     }
 
     /**

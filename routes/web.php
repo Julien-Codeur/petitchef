@@ -86,6 +86,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ========== CLIENT ROUTES ==========
     Route::middleware('client')->group(function () {
+        // All dishes for clients - view all available dishes from approved cooks
+        Route::get('/dishes', [DishController::class, 'index'])->name('dishes.index');
+
         // Menu du jour for clients
         Route::get('/menu-du-jour', function () {
             // Eager load cook relation to avoid N+1 queries

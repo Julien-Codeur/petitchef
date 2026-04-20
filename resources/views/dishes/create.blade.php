@@ -1,6 +1,9 @@
 <x-cook-sidebar-layout>
 <div style="padding: 0;">
-    <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 20px; font-family: 'Plus Jakarta Sans', sans-serif;">Créer un Nouveau Plat 🍽️</h1>
+    <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 20px; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 8px;">
+        <x-icon icon="menu" size="32" color="#333" />
+        Créer un Nouveau Plat
+    </h1>
 
     <form method="POST" action="{{ route('dishes.store') }}" enctype="multipart/form-data" style="background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 30px; max-width: 700px;">
         @csrf
@@ -53,7 +56,9 @@
             <div style="border: 2px dashed #e0e0e0; border-radius: 8px; padding: 20px; text-align: center; background-color: #f9f9f9;">
                 <input type="file" name="photo" accept="image/*" id="photo-input" style="display: none;">
                 <label for="photo-input" style="cursor: pointer; display: block;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">📸</div>
+                    <div style="display: flex; justify-content: center; margin-bottom: 8px;">
+                        <x-icon icon="search" size="32" color="#ccc" />
+                    </div>
                     <p style="margin: 0; color: #333; font-weight: 600;">Cliquez ou déposez une image</p>
                     <p style="margin: 4px 0 0 0; color: #999; font-size: 12px;">JPG, PNG, GIF - Max 5MB</p>
                 </label>
@@ -61,11 +66,13 @@
             </div>
         </div>
 
-        <!-- Boutons -->
-        <div style="display: flex; gap: 12px;">
-            <button type="submit" style="flex: 1; background-color: #ff6b35; color: white; border: none; padding: 12px; border-radius: 20px; font-size: 15px; font-weight: 700; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
-                ✓ Créer le plat
+        <!-- Boutons --> display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
+                <x-icon icon="check" size="16" color="white" />
+                Créer le plat
             </button>
+            <a href="{{ route('dishes.index') }}" style="flex: 1; background-color: #f5f5f5; color: #333; border: 1px solid #e0e0e0; padding: 12px; border-radius: 20px; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <x-icon icon="close" size="16" color="#333" />
+               ton>
             <a href="{{ route('dishes.index') }}" style="flex: 1; background-color: #f5f5f5; color: #333; border: 1px solid #e0e0e0; padding: 12px; border-radius: 20px; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
                 ✕ Annuler
             </a>

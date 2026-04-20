@@ -1,17 +1,22 @@
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 20px;">
-        <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">Bienvenue {{ auth()->user()->name }} 👋</h1>
+        <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="home" size="32" color="#333" />
+            Bienvenue {{ auth()->user()->name }}
+        </h1>
         <p style="color: #999; font-size: 14px;">Découvrez nos cuisiniers et leurs délicieux plats du jour</p>
     </div>
 
     <!-- Barre Actions -->
     <div style="background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px;">
-        <a href="{{ route('dishes.menu-du-jour') }}" style="flex: 1; background-color: #ff6b35; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
-            🍽️ Menu du Jour
+        <a href="{{ route('dishes.menu-du-jour') }}" style="flex: 1; background-color: #ff6b35; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
+            <x-icon icon="menu" size="16" color="white" />
+            Menu du Jour
         </a>
-        <a href="{{ route('cart.index') }}" style="flex: 1; background-color: #00677e; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer;" onmouseover="this.style.backgroundColor='#004d63'" onmouseout="this.style.backgroundColor='#00677e'">
-            🛒 Mon Panier
+        <a href="{{ route('cart.index') }}" style="flex: 1; background-color: #00677e; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.backgroundColor='#004d63'" onmouseout="this.style.backgroundColor='#00677e'">
+            <x-icon icon="cart" size="16" color="white" />
+            Mon Panier
             @php
                 $cart = session()->get('cart', []);
             @endphp
@@ -19,8 +24,9 @@
                 <span style="display: inline-block; background-color: white; color: #00677e; padding: 2px 8px; border-radius: 10px; font-weight: 700; font-size: 12px; margin-left: 4px;">{{ count($cart) }}</span>
             @endif
         </a>
-        <a href="{{ route('orders.index') }}" style="flex: 1; background-color: #705a49; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer;" onmouseover="this.style.backgroundColor='#5a4738'" onmouseout="this.style.backgroundColor='#705a49'">
-            📋 Mes Commandes
+        <a href="{{ route('orders.index') }}" style="flex: 1; background-color: #705a49; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.backgroundColor='#5a4738'" onmouseout="this.style.backgroundColor='#705a49'">
+            <x-icon icon="orders" size="16" color="white" />
+            Mes Commandes
         </a>
     </div>
 

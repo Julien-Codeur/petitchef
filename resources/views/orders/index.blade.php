@@ -2,13 +2,16 @@
 <div style="padding: 0;">
     <!-- Entête -->
     <div style="margin-bottom: 30px;">
-        <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">
+        <h1 style="font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; gap: 8px;">
             @if(auth()->user()->isClient())
-                Mes Commandes 📋
+                <x-icon icon="orders" size="32" color="#333" />
+                Mes Commandes
             @elseif(auth()->user()->isCook())
-                Commandes Reçues 👨‍🍳
+                <x-icon icon="menu" size="32" color="#333" />
+                Commandes Reçues
             @else
-                Toutes les Commandes 📊
+                <x-icon icon="home" size="32" color="#333" />
+                Toutes les Commandes
             @endif
         </h1>
         <p style="color: #999; margin: 0;">Historique complet de vos transactions</p>
@@ -16,22 +19,25 @@
 
     <!-- Messages -->
     @if ($message = Session::get('success'))
-        <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #4caf50;">
-            <p style="margin: 0;">✓ {{ $message }}</p>
+        <div style="background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #4caf50; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="check" size="20" color="#4caf50" />
+            <p style="margin: 0;">{{ $message }}</p>
         </div>
     @endif
 
     @if ($message = Session::get('error'))
-        <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #d32f2f;">
-            <p style="margin: 0;">✗ {{ $message }}</p>
+        <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 16px; margin-bottom: 20px; color: #d32f2f; display: flex; align-items: center; gap: 8px;">
+            <x-icon icon="alert" size="20" color="#d32f2f" />
+            <p style="margin: 0;">{{ $message }}</p>
         </div>
     @endif
 
     <!-- Barre d'action -->
     <div style="background-color: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px;">
         @if(auth()->user()->isClient())
-            <a href="{{ route('dishes.menu-du-jour') }}" style="background-color: #ff6b35; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; cursor: pointer;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
-                🍽️ Continuer mes courses
+            <a href="{{ route('dishes.menu-du-jour') }}" style="background-color: #ff6b35; color: white; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.backgroundColor='#ff5a1f'" onmouseout="this.style.backgroundColor='#ff6b35'">
+                <x-icon icon="menu" size="16" color="white" />
+                Continuer mes courses
             </a>
         @endif
     </div>
